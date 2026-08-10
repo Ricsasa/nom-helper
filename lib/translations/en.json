@@ -1,0 +1,25 @@
+{
+  "common": {
+    "loading": "Loading",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "dismiss": "Dismiss",
+    "retry": "Retry",
+    "empty": "Nothing here yet",
+    "error": "Something went wrong"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "noAccount": "No account?",
+    "haveAccount": "Already have an account?",
+    "confirmEmail": "Check your inbox to confirm the address",
+    "genericError": "Could not complete the request"
+  }
+}

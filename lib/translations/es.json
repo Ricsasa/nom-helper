@@ -1,0 +1,25 @@
+{
+  "common": {
+    "loading": "Cargando",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "dismiss": "Cerrar",
+    "retry": "Reintentar",
+    "empty": "Todavía no hay nada",
+    "error": "Algo salió mal"
+  },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "signOut": "Cerrar sesión",
+    "email": "Correo",
+    "password": "Contraseña",
+    "noAccount": "¿No tienes cuenta?",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "confirmEmail": "Revisa tu correo para confirmar la dirección",
+    "genericError": "No se pudo completar la petición"
+  }
+}

@@ -1,0 +1,11 @@
+'use client';
+
+import AuthForm from '@/components/AuthForm';
+
+export default function SignupPage() {
+  return (
+    <main>
+      <AuthForm mode="signup" />
+    </main>
+  );
+}

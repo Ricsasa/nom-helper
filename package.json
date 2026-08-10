@@ -1,0 +1,54 @@
+{
+  "name": "next-boilerplate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js 15 + React 19 starter with a backend variant (Supabase or Convex) and no styling opinions",
+  "scripts": {
+    "setup": "node setup.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.101.4",
+    "@vercel/speed-insights": "^2.0.0",
+    "clsx": "^2.0.0",
+    "next": "^15.0.0",
+    "next-themes": "^0.2.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^3.3.0",
+    "zustand": "^4.4.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^15.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-mock-extended": "^3.0.7",
+    "postcss": "^8.5.22",
+    "ts-jest": "^29.4.12",
+    "typescript": "^5.0.0"
+  },
+  "overrides": {
+    "postcss": "^8.5.22",
+    "sharp": "^0.35.0",
+    "serialize-javascript": "^7.0.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
