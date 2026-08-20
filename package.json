@@ -12,9 +12,12 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:db": "vitest run src/lib/db",
+    "test:db:watch": "vitest src/lib/db"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
     "@tanstack/react-query": "^5.101.4",
     "@vercel/speed-insights": "^2.0.0",
     "clsx": "^2.0.0",
@@ -41,7 +44,8 @@
     "jest-mock-extended": "^3.0.7",
     "postcss": "^8.5.22",
     "ts-jest": "^29.4.12",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.11"
   },
   "overrides": {
     "postcss": "^8.5.22",
