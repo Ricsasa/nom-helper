@@ -43,7 +43,7 @@ This is the persistent setting. Once saved, the user's language preference follo
 | Empty states and system notices | Standard codes and references (NOM-001-SEDE) |
 | Conversation start notice | norm_version field values |
 | Permanent disclaimer | Reason categories in the rating component |
-| Operator module labels and actions | Tutorial content in `tutorials/` |
+| Operator module labels and actions | Tutorial content in `docs/tutorials/` |
 | Account settings modal | — |
 
 The rating reason categories are a special case: they are written from the user's perspective in Spanish and must remain in Spanish regardless of UI language, because they describe the normative content that is always in Spanish.

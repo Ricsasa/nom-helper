@@ -45,10 +45,11 @@ These are not preferences. An agent that breaks one of these stops and reports i
 | --- | --- | --- |
 | `docs/specs/` | The spec for each agent. Reading your spec is mandatory before any task. | Yes |
 | `docs/briefs/` | Design briefs and the design handoff. The reference for the frontend agent. | Yes |
-| `tutorials/db/` | Tutorials written by the DB agent. | No |
-| `tutorials/fe/` | Tutorials written by the frontend agent. | No |
+| `docs/tutorials/db/` | Tutorials written by the DB agent. | Yes |
+| `docs/tutorials/fe/` | Tutorials written by the frontend agent. | Yes |
 
-`tutorials/` is listed in `.gitignore`. Never commit it.
+Tutorials are committed. They are part of the repository, reviewed like any other
+document, and they travel with the code they explain.
 
 The Claude Design import currently lives in `docs/design/`. It is the frontend agent's design source until it moves into `docs/briefs/`.
 
@@ -56,7 +57,7 @@ The Claude Design import currently lives in `docs/design/`. It is the frontend a
 
 ## 5. Tutorials — both agents
 
-After every migration, data access function, component, or significant feature, write one entry in your tutorials directory.
+After every migration, data access function, component, or significant feature, write one entry in your tutorials directory: `docs/tutorials/db/` for the DB agent, `docs/tutorials/fe/` for the frontend agent.
 
 Each entry documents:
 
