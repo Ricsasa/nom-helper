@@ -1,0 +1,118 @@
+erDiagram
+    AUTH_USERS {
+        uuid id PK
+        string email
+        string encrypted_password
+        timestamp email_confirmed_at
+        timestamp last_sign_in_at
+        jsonb raw_app_meta_data
+        timestamp created_at
+    }
+
+    PROFILES {
+        uuid id PK
+        uuid auth_user_id FK
+        string name
+        string role
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PLANS {
+        uuid id PK
+        string name
+        int daily_quota_limit
+        decimal price
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    SUBSCRIPTIONS {
+        uuid id PK
+        uuid profile_id FK
+        uuid plan_id FK
+        date starts_at
+        date ends_at
+        string status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CONVERSATIONS {
+        uuid id PK
+        uuid profile_id FK
+        string title
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    MESSAGES {
+        uuid id PK
+        uuid conversation_id FK
+        string query
+        string summary
+        string explanation
+        jsonb citations
+        string confidence_level
+        boolean insufficient_info
+        string norm_version
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    RESPONSE_RATINGS {
+        uuid id PK
+        uuid message_id FK
+        boolean is_positive
+        string reason_category
+        string reason_text
+        string review_status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    OPERATOR_REVIEWS {
+        uuid id PK
+        uuid rating_id FK
+        string technical_cause
+        string destination
+        timestamp reviewed_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    DAILY_QUOTAS {
+        uuid id PK
+        uuid profile_id FK
+        int queries_used
+        date quota_date
+        timestamp reset_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CONSUMPTION_LOGS {
+        uuid id PK
+        uuid profile_id FK
+        uuid message_id FK
+        int tokens_used
+        decimal estimated_cost
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    AUTH_USERS ||--|| PROFILES : "extends"
+
+    PROFILES ||--o{ CONVERSATIONS : "owns"
+    PROFILES ||--o{ DAILY_QUOTAS : "tracks"
+    PROFILES ||--o{ CONSUMPTION_LOGS : "generates"
+    PROFILES ||--o| SUBSCRIPTIONS : "has"
+
+    PLANS ||--o{ SUBSCRIPTIONS : "defines"
+
+    CONVERSATIONS ||--o{ MESSAGES : "contains"
+
+    MESSAGES ||--o| RESPONSE_RATINGS : "rated by"
+    MESSAGES ||--o{ CONSUMPTION_LOGS : "logged in"
+
+    RESPONSE_RATINGS ||--o| OPERATOR_REVIEWS : "reviewed in"

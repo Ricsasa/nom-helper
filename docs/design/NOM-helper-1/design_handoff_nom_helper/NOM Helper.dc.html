@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#FBFBFA; }
+  * { box-sizing:border-box; }
+  a { color:#2E7D5B; text-decoration:none; }
+  a:hover { color:#1F5A41; text-decoration:underline; }
+  input, button, textarea { font-family:inherit; }
+  ::placeholder { color:#A2A6AA; }
+  @keyframes nomPulse { 0%,100% { opacity:.25 } 50% { opacity:1 } }
+</style>
+</helmet>
+<div style="font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16181A;background:#FBFBFA;min-height:100vh;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased">
+
+  <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ true }}">
+    <div style="height:100vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:24px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:10px;height:10px;background:#2E7D5B"></div>
+          <div style="width:10px;height:10px;background:#6B5BA6"></div>
+        </div>
+        <div style="font-size:19px;font-weight:600;letter-spacing:-0.01em">NOM Helper</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95;letter-spacing:0.04em;text-transform:uppercase">NOM-001-SEDE · Instalaciones eléctricas</div>
+      </div>
+
+      <div style="width:100%;max-width:396px;background:#FFFFFF;border:1px solid #E4E4E1;padding:32px">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px">{{ authTitle }}</div>
+        <div style="font-size:13.5px;color:#55595E;margin-bottom:24px">{{ authSubtitle }}</div>
+
+        <sc-if value="{{ formError }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px solid #D9C9C4;background:#FCF6F4;padding:12px 14px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:#8C3A24;margin-top:1px">!</div>
+            <div>
+              <div style="font-size:13.5px;font-weight:500;color:#7A3520">{{ formErrorTitle }}</div>
+              <div style="font-size:13px;color:#6B4A3E;margin-top:2px">{{ formErrorHelp }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:12.5px;font-weight:500;color:#55595E;letter-spacing:0.01em">Nombre</span>
+              <input type="text" value="{{ nameVal }}" onChange="{{ onName }}" placeholder="Ing. Ramiro Martínez" style="border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none;border-radius:0" style-focus="border-color:#2E7D5B" />
+            </label>
+          </sc-if>
+
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:12.5px;font-weight:500;color:#55595E;letter-spacing:0.01em">Correo</span>
+            <input type="email" value="{{ emailVal }}" onChange="{{ onEmail }}" placeholder="nombre@empresa.mx" style="border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+          </label>
+
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:500;color:#55595E">
+              <span>Contraseña</span>
+              <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+                <a href="#" onClick="{{ noop }}" style="font-size:12.5px;font-weight:400;color:#55595E;text-decoration:underline;text-underline-offset:2px">Recuperar acceso</a>
+              </sc-if>
+            </span>
+            <input type="password" value="{{ passVal }}" onChange="{{ onPass }}" onKeyDown="{{ onAuthKey }}" placeholder="••••••••" style="border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+            <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95">Mínimo 8 caracteres, 1 número</span>
+            </sc-if>
+          </label>
+
+          <button onClick="{{ onSubmit }}" style="margin-top:4px;background:#16181A;color:#FFF;border:none;padding:11px 14px;font-size:14px;font-weight:500;cursor:pointer;letter-spacing:0.01em" style-hover="background:#2E7D5B">{{ authCta }}</button>
+        </div>
+      </div>
+
+      <div style="font-size:13.5px;color:#55595E">
+        {{ authSwitchLabel }}
+        <a href="#" onClick="{{ onSwitchAuth }}" style="font-weight:500">{{ authSwitchCta }}</a>
+      </div>
+    </div>
+    <div style="flex:none;border-top:1px solid #E4E4E1;background:#F7F7F4;padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:#8A8F95;letter-spacing:0.01em">
+      <span>Made with</span>
+      <span style="font-size:11px;color:#16181A">🖤</span>
+      <span>by</span>
+      <a href="https://rs-studio.dev" style="color:#55595E;font-weight:500;text-decoration:none" style-hover="color:#16181A;text-decoration:underline">rs-studio.dev</a>
+    </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
+    <div style="display:flex;flex:1;min-height:0;overflow:hidden">
+
+      <sc-if value="{{ sidebarVisible }}" hint-placeholder-val="{{ true }}">
+        <div style="{{ sidebarStyle }}">
+          <div style="padding:18px 16px 14px;border-bottom:1px solid #E4E4E1;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="display:flex;gap:3px">
+                <div style="width:8px;height:8px;background:#2E7D5B"></div>
+                <div style="width:8px;height:8px;background:#6B5BA6"></div>
+              </div>
+              <div style="font-size:14.5px;font-weight:600;letter-spacing:-0.01em">NOM Helper</div>
+            </div>
+            <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ toggleSidebar }}" style="background:none;border:none;font-size:16px;color:#55595E;cursor:pointer;padding:2px 4px">✕</button>
+            </sc-if>
+          </div>
+
+          <div style="padding:12px 10px;border-bottom:1px solid #E4E4E1;display:flex;flex-direction:column;gap:2px;flex:none">
+            <button onClick="{{ onNewQuery }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;padding:8px 10px;font-size:13.5px;font-weight:500;color:#16181A;cursor:pointer" style-hover="background:#F1F1EE">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2E7D5B;width:12px;display:inline-block">+</span>
+              Nueva consulta
+            </button>
+            <div style="display:flex;align-items:center;gap:10px;padding:14px 10px 6px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6B5BA6;width:12px;display:inline-block">×÷</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">Calculadoras</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px;padding-bottom:6px">
+              <sc-for list="{{ calculators }}" as="c" hint-placeholder-count="3">
+                <button onClick="{{ noop }}" style="display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;background:none;border:none;padding:7px 10px 7px 32px;font-size:13.5px;color:#55595E;cursor:pointer" style-hover="background:#F1F1EE;color:#16181A">
+                  <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <button onClick="{{ onAbout }}" style="{{ aboutNavStyle }}">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#8A8F95;width:12px;display:inline-block">§</span>
+              Acerca y fuentes
+            </button>
+          </div>
+
+          <div style="flex:1;overflow-y:auto;padding:14px 10px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;padding:0 10px 8px">Historial</div>
+            <sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:1px">
+                <sc-for list="{{ history }}" as="h" hint-placeholder-count="4">
+                  <button onClick="{{ h.onOpen }}" style="{{ h.style }}">{{ h.topic }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px dashed #DCDCD8;padding:14px;margin:4px 4px 0">
+                <div style="font-size:13px;color:#55595E;line-height:1.5">Aquí se guardan tus consultas.</div>
+                <div style="font-size:12.5px;color:#8A8F95;margin-top:4px">Cada una queda identificada por su tema.</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="border-top:1px solid #E4E4E1;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none">
+            <div style="min-width:0">
+              <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ing. R. Martínez</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">rmartinez@iepsa.mx</div>
+            </div>
+            <button onClick="{{ onLogout }}" style="background:none;border:1px solid #E0E0DC;padding:5px 9px;font-size:12px;color:#55595E;cursor:pointer;white-space:nowrap" style-hover="border-color:#B9BCB8;color:#16181A">Salir</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#FBFBFA">
+
+      <sc-if value="{{ viewIsAbout }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0">
+          <div style="height:53px;flex:none;border-bottom:1px solid #E4E4E1;display:flex;align-items:center;gap:12px;padding:0 20px">
+            <sc-if value="{{ showMenuButton }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ toggleSidebar }}" style="background:none;border:1px solid #E0E0DC;padding:5px 9px;font-size:13px;color:#16181A;cursor:pointer">☰</button>
+            </sc-if>
+            <div style="font-size:13.5px;font-weight:500">Acerca del proyecto y las fuentes</div>
+            <button onClick="{{ onBackToChat }}" style="margin-left:auto;background:none;border:1px solid #E0E0DC;padding:5px 10px;font-size:12.5px;color:#55595E;cursor:pointer" style-hover="border-color:#B9BCB8;color:#16181A">Volver a la consulta</button>
+          </div>
+
+          <div style="flex:1;overflow-y:auto">
+            <div style="max-width:760px;margin:0 auto;padding:40px 20px 96px">
+
+              <div style="font-size:24px;font-weight:600;letter-spacing:-0.015em">NOM Helper</div>
+              <div style="font-size:15px;color:#2A2D30;margin-top:12px;line-height:1.62;max-width:60ch;text-wrap:pretty">Herramienta de consulta sobre normatividad eléctrica mexicana. Se pregunta en lenguaje natural y la respuesta se construye a partir del texto de la norma, con la cita al capítulo, artículo y página de donde salió cada afirmación.</div>
+              <div style="font-size:15px;color:#2A2D30;margin-top:12px;line-height:1.62;max-width:60ch;text-wrap:pretty">No consulta internet ni fuentes secundarias: solo los documentos normativos incorporados al sistema, listados abajo con su versión y fecha.</div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:44px 0 14px">
+                <div style="width:7px;height:7px;background:#2E7D5B;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">Normas incorporadas</div>
+              </div>
+
+              <div style="border:1px solid #E4E4E1;background:#FFFFFF">
+                <sc-for list="{{ sources }}" as="s" hint-placeholder-count="2">
+                  <div style="{{ s.rowStyle }}">
+                    <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px">
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:500;letter-spacing:0.01em">{{ s.clave }}</div>
+                      <div style="display:flex;align-items:center;gap:7px;margin-left:auto">
+                        <div style="{{ s.markStyle }}"></div>
+                        <div style="{{ s.estadoStyle }}">{{ s.estado }}</div>
+                      </div>
+                    </div>
+                    <div style="font-size:14px;color:#2A2D30;margin-top:5px;text-wrap:pretty">{{ s.nombre }}</div>
+                    <sc-if value="{{ s.nota }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:13px;color:#55595E;margin-top:6px;text-wrap:pretty">{{ s.nota }}</div>
+                    </sc-if>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:14px">
+                      <sc-for list="{{ s.fields }}" as="f" hint-placeholder-count="3">
+                        <div>
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ f.label }}</div>
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#16181A;margin-top:3px">{{ f.value }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA;margin-top:9px">{{ sourcesFootnote }}</div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:48px 0 14px">
+                <div style="width:7px;height:7px;background:#6B5BA6;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">Qué cubre y qué no</div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:{{ coverCols }};gap:1px;background:#E4E4E1;border:1px solid #E4E4E1">
+                <div style="background:#FFFFFF;padding:18px">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:12px">Responde bien</div>
+                  <div style="display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ covers }}" as="c" hint-placeholder-count="4">
+                      <div style="display:flex;gap:10px;font-size:13.5px;color:#2A2D30;line-height:1.5;text-wrap:pretty">
+                        <span style="font-family:'IBM Plex Mono',monospace;color:#2E7D5B;flex:none">+</span>
+                        <span>{{ c.text }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="background:#FFFFFF;padding:18px">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:12px">Queda fuera</div>
+                  <div style="display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ notCovers }}" as="c" hint-placeholder-count="4">
+                      <div style="display:flex;gap:10px;font-size:13.5px;color:#55595E;line-height:1.5;text-wrap:pretty">
+                        <span style="font-family:'IBM Plex Mono',monospace;color:#A2A6AA;flex:none">–</span>
+                        <span>{{ c.text }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:48px 0 14px">
+                <div style="width:7px;height:7px;background:#2E7D5B;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">Cómo leer una respuesta</div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0;border-top:1px solid #E4E4E1">
+                <sc-for list="{{ anatomy }}" as="a" hint-placeholder-count="4">
+                  <div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #E4E4E1">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#6B5BA6;flex:none;width:22px;padding-top:2px">{{ a.num }}</div>
+                    <div style="flex:none;width:112px;font-size:13.5px;font-weight:600">{{ a.name }}</div>
+                    <div style="font-size:13.5px;color:#2A2D30;line-height:1.55;text-wrap:pretty">{{ a.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="font-size:13.5px;font-weight:600;margin:26px 0 10px">Niveles de confianza</div>
+              <div style="border:1px solid #E4E4E1;background:#FFFFFF">
+                <sc-for list="{{ confidenceLevels }}" as="l" hint-placeholder-count="3">
+                  <div style="{{ l.rowStyle }}">
+                    <div style="display:flex;gap:3px;align-items:center;flex:none;padding-top:3px">
+                      <sc-for list="{{ l.bars }}" as="b" hint-placeholder-count="3">
+                        <div style="{{ b.style }}"></div>
+                      </sc-for>
+                    </div>
+                    <div style="flex:none;width:52px;font-size:13.5px;font-weight:600">{{ l.label }}</div>
+                    <div style="font-size:13.5px;color:#2A2D30;line-height:1.55;text-wrap:pretty">{{ l.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:48px 0 14px">
+                <div style="width:7px;height:7px;background:#C9A227;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">Aviso completo</div>
+              </div>
+
+              <div style="border:1px solid #E7DCB4;border-left:3px solid #C9A227;background:#FDFAEC;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+                <sc-for list="{{ disclaimer }}" as="d" hint-placeholder-count="4">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:600;margin-bottom:4px">{{ d.title }}</div>
+                    <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;text-wrap:pretty">{{ d.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ viewIsChat }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0">
+        <div style="height:53px;flex:none;border-bottom:1px solid #E4E4E1;display:flex;align-items:center;gap:12px;padding:0 20px;background:#FBFBFA">
+          <sc-if value="{{ showMenuButton }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toggleSidebar }}" style="background:none;border:1px solid #E0E0DC;padding:5px 9px;font-size:13px;color:#16181A;cursor:pointer">☰</button>
+          </sc-if>
+          <div style="font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ threadTitle }}</div>
+          <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;letter-spacing:0.04em;white-space:nowrap">NOM-001-SEDE-2018</div>
+        </div>
+
+        <div style="flex:1;overflow-y:auto">
+          <div style="max-width:720px;margin:0 auto;padding:22px 20px 0">
+            <sc-if value="{{ noticeOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="border:1px solid #E7DCB4;border-left:3px solid #C9A227;background:#FDFAEC;padding:16px 18px">
+                <div style="display:flex;align-items:baseline;gap:10px">
+                  <div style="width:8px;height:8px;background:#C9A227;flex:none;transform:translateY(-1px)"></div>
+                  <div style="font-size:14px;font-weight:600;letter-spacing:-0.005em">Antes de comenzar</div>
+                  <button onClick="{{ toggleNotice }}" style="margin-left:auto;background:none;border:none;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#55595E;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px">Contraer</button>
+                </div>
+                <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;margin-top:10px;text-wrap:pretty">Esta sesión consulta la {{ sessionNorm }}, vigente desde el {{ sessionDate }}.</div>
+                <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;margin-top:8px;text-wrap:pretty">Las respuestas se construyen a partir del texto de la norma y siempre incluyen la cita correspondiente. Verifica cada cita contra el texto oficial antes de aplicarla.</div>
+                <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;margin-top:8px;text-wrap:pretty">No sustituye el criterio de un profesional responsable ni constituye un dictamen técnico.</div>
+                <a href="#" onClick="{{ onAbout }}" style="display:inline-block;font-size:13px;font-weight:500;margin-top:14px;color:#6B5312;text-decoration:underline;text-underline-offset:3px">Fuentes y alcance completo</a>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noticeCollapsed }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ toggleNotice }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#FDFAEC;border:1px solid #E7DCB4;border-left:3px solid #C9A227;padding:8px 12px;cursor:pointer" style-hover="background:#FAF5DE">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#16181A">{{ sessionNorm }} · vigente desde {{ sessionDate }}</span>
+                <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6B5312">Ver aviso</span>
+              </button>
+            </sc-if>
+          </div>
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:720px;margin:0 auto;padding:56px 20px 40px">
+              <div style="font-size:23px;font-weight:600;letter-spacing:-0.015em">¿Qué necesitas verificar?</div>
+              <div style="font-size:14.5px;color:#55595E;margin-top:8px;max-width:52ch;text-wrap:pretty">Pregunta en lenguaje natural. Cada respuesta viene con la referencia exacta al texto de la norma: capítulo, artículo y página.</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;margin:34px 0 10px">Consultas de ejemplo</div>
+              <div style="border-top:1px solid #E4E4E1">
+                <sc-for list="{{ examples }}" as="ex" hint-placeholder-count="5">
+                  <button onClick="{{ ex.onPick }}" style="display:flex;gap:14px;align-items:baseline;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #E4E4E1;padding:13px 8px;font-size:14px;color:#16181A;cursor:pointer" style-hover="background:#F4F4F1">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#6B5BA6;flex:none">{{ ex.num }}</span>
+                    <span style="text-wrap:pretty">{{ ex.text }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="max-width:720px;margin:0 auto;padding:28px 20px 40px;display:flex;flex-direction:column;gap:34px">
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="0">
+              <div>
+                <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;justify-content:flex-end">
+                    <div style="background:#FFFFFF;border:1px solid #E4E4E1;padding:11px 14px;font-size:14.5px;max-width:86%;text-wrap:pretty">{{ m.text }}</div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isAnswer }}" hint-placeholder-val="{{ false }}">
+                  <div>
+                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+                      <div style="width:7px;height:7px;background:#2E7D5B;flex:none;transform:translateY(-1px)"></div>
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">Resumen</div>
+                    </div>
+                    <div style="font-size:17px;line-height:1.5;font-weight:500;letter-spacing:-0.008em;text-wrap:pretty;border-left:2px solid #16181A;padding-left:14px">{{ m.summary }}</div>
+
+                    <sc-if value="{{ m.showExplanation }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:26px">
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;margin-bottom:10px;padding-left:15px">Explicación</div>
+                        <div style="padding-left:15px;display:flex;flex-direction:column;gap:12px">
+                          <sc-for list="{{ m.paragraphs }}" as="p" hint-placeholder-count="2">
+                            <div style="font-size:14.5px;line-height:1.62;color:#2A2D30;text-wrap:pretty">{{ p.text }}</div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <sc-if value="{{ m.showCitations }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:28px;padding-left:15px">
+                        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">Citas de la norma</div>
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA">{{ m.citeCount }}</div>
+                        </div>
+                        <div style="border:1px solid #E4E4E1;background:#FFFFFF">
+                          <sc-for list="{{ m.citations }}" as="c" hint-placeholder-count="3">
+                            <div style="{{ c.rowStyle }}">
+                              <button onClick="{{ c.onToggle }}" style="display:flex;width:100%;text-align:left;gap:12px;align-items:baseline;background:none;border:none;padding:12px 14px;cursor:pointer" style-hover="background:#F7F7F4">
+                                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6B5BA6;flex:none;padding-top:1px">{{ c.mark }}</span>
+                                <span style="flex:1;min-width:0">
+                                  <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#16181A;letter-spacing:0.01em">{{ c.ref }}</span>
+                                  <span style="display:block;font-size:13px;color:#55595E;margin-top:3px">{{ c.title }}</span>
+                                </span>
+                                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;flex:none">{{ c.toggleLabel }}</span>
+                              </button>
+                              <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                                <div style="padding:0 14px 14px 40px">
+                                  <div style="background:#F7F7F4;border-left:2px solid #6B5BA6;padding:11px 13px;font-size:13.5px;line-height:1.6;color:#2A2D30;text-wrap:pretty">{{ c.quote }}</div>
+                                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;margin-top:7px">{{ c.page }}</div>
+                                </div>
+                              </sc-if>
+                            </div>
+                          </sc-for>
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:12px;margin-top:14px;border-top:1px solid #E4E4E1;padding-top:12px">
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">Confianza</div>
+                          <div style="display:flex;gap:3px;align-items:center">
+                            <sc-for list="{{ m.confidenceBars }}" as="b" hint-placeholder-count="3">
+                              <div style="{{ b.style }}"></div>
+                            </sc-for>
+                          </div>
+                          <div style="font-size:13px;font-weight:600;letter-spacing:0.01em">{{ m.confidenceLabel }}</div>
+                          <div style="font-size:12.5px;color:#8A8F95;font-family:'IBM Plex Mono',monospace">{{ m.confidenceNote }}</div>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isInsufficient }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid #D6D6D2;background:#FFFFFF">
+                    <div style="border-bottom:1px solid #E4E4E1;padding:11px 16px;display:flex;align-items:center;gap:9px;background:#F4F4F1">
+                      <div style="width:7px;height:7px;border:1.5px solid #16181A;flex:none"></div>
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#16181A;font-weight:500">Información insuficiente</div>
+                    </div>
+                    <div style="padding:16px">
+                      <div style="font-size:15px;line-height:1.55;text-wrap:pretty">{{ m.summary }}</div>
+                      <div style="font-size:13.5px;color:#55595E;margin-top:10px;line-height:1.6;text-wrap:pretty">{{ m.detail }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;margin:18px 0 8px">Reformula así</div>
+                      <div style="display:flex;flex-direction:column;gap:1px;border-top:1px solid #E4E4E1">
+                        <sc-for list="{{ m.suggestions }}" as="s" hint-placeholder-count="2">
+                          <button onClick="{{ s.onPick }}" style="text-align:left;background:none;border:none;border-bottom:1px solid #E4E4E1;padding:10px 2px;font-size:13.5px;color:#16181A;cursor:pointer" style-hover="color:#2E7D5B">{{ s.text }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isError }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid #D9C9C4;background:#FCF6F4;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:#8C3A24;padding-top:2px">!</div>
+                    <div style="flex:1">
+                      <div style="font-size:14.5px;font-weight:500;color:#7A3520">No se pudo procesar la consulta</div>
+                      <div style="font-size:13.5px;color:#6B4A3E;margin-top:3px;text-wrap:pretty">Se perdió la conexión con el índice de la norma. Tu texto no se borró: vuelve a enviarlo.</div>
+                      <button onClick="{{ m.onRetry }}" style="margin-top:12px;background:#16181A;color:#FFF;border:none;padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#2E7D5B">Reintentar</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ generating }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="{{ pulseStyle }}"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#55595E;letter-spacing:0.02em">{{ generatingLabel }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="flex:none;border-top:1px solid #E4E4E1;background:#FBFBFA;padding:14px 20px 52px">
+          <div style="max-width:720px;margin:0 auto">
+            <div style="display:flex;gap:0;border:1px solid #D8D8D4;background:#FFFFFF;align-items:stretch">
+              <input type="text" value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="Pregunta sobre la NOM-001-SEDE…" style="flex:1;border:none;outline:none;padding:12px 14px;font-size:14.5px;color:#16181A;min-width:0" />
+              <button onClick="{{ onSend }}" style="{{ sendStyle }}">Consultar</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;background:#FDFAEC;border-left:3px solid #C9A227;padding:8px 11px;font-size:12.5px;color:#4A4127;margin-top:10px;line-height:1.5">
+              <span>Las respuestas pueden contener errores. Verifica siempre contra el texto oficial de la norma.</span>
+              <a href="#" onClick="{{ onAbout }}" style="color:#6B5312;font-weight:500;text-decoration:underline;text-underline-offset:3px;font-size:12.5px">Fuentes y alcance</a>
+            </div>
+            </div>
+        </div>
+      </div>
+      </sc-if>
+
+      </div>
+    </div>
+    <div style="flex:none;border-top:1px solid #E4E4E1;background:#F7F7F4;padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:#8A8F95;letter-spacing:0.01em">
+    <span>Made with</span>
+    <span style="font-size:11px;color:#16181A">🖤</span>
+    <span>by</span>
+    <a href="https://rs-studio.dev" style="color:#55595E;font-weight:500;text-decoration:none" style-hover="color:#16181A;text-decoration:underline">rs-studio.dev</a>
+  </div>
+    </div>
+  </sc-if>
+
+  <div style="{{ navStyle }}">
+    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3">
+      <button onClick="{{ n.onPick }}" style="{{ n.style }}">{{ n.label }}</button>
+    </sc-for>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;register&quot;,&quot;chat&quot;],&quot;default&quot;:&quot;login&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototipo&quot;},&quot;startPopulated&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototipo&quot;}}">
+const SESSION_NORM = "NOM-001-SEDE-2018";
+const SESSION_DATE = "29 nov 2018";
+
+const SOURCES = [
+  {
+    clave: "NOM-001-SEDE-2018",
+    nombre: "Instalaciones eléctricas (utilización)",
+    version: "2018",
+    publicacion: "29 nov 2018 · DOF",
+    estado: "vigente",
+    incorporada: "12 mar 2026",
+    nota: ""
+  },
+  {
+    clave: "NOM-001-SEDE-2012",
+    nombre: "Instalaciones eléctricas (utilización)",
+    version: "2012",
+    publicacion: "27 nov 2012 · DOF",
+    estado: "sustituida",
+    incorporada: "12 mar 2026",
+    nota: "Se conserva como referencia histórica: sirve para consultar instalaciones proyectadas o verificadas bajo esa edición. No se cita en respuestas salvo que la consulta la pida de forma explícita."
+  }
+];
+
+const CITES = [
+  { mark:"[1]", ref:"Cap. 2 · Art. 210-19(a)(1)", title:"Ampacidad mínima de conductores en circuitos derivados",
+    quote:"Los conductores de circuitos derivados deben tener una ampacidad no menor que la carga máxima a servir, y en ningún caso menor que la capacidad nominal del dispositivo de protección contra sobrecorriente del circuito.",
+    page:"p. 148 · NOM-001-SEDE-2018" },
+  { mark:"[2]", ref:"Cap. 3 · Tabla 310-15(b)(16)", title:"Ampacidad de conductores aislados, no más de tres portadores",
+    quote:"Cobre, aislamiento 60 °C (TW, UF): calibre 10 AWG — 30 A. Con aislamiento de 75 °C (THW, THHW, XHHW): 35 A. El valor aplicable queda limitado por la temperatura del terminal del equipo.",
+    page:"p. 214 · NOM-001-SEDE-2018" },
+  { mark:"[3]", ref:"Cap. 2 · Art. 240-4(D)(7)", title:"Protección contra sobrecorriente de conductores pequeños",
+    quote:"Para conductor de cobre calibre 10 AWG, la protección contra sobrecorriente no debe exceder de 30 A, salvo lo permitido en 240-4(E) a 240-4(G).",
+    page:"p. 172 · NOM-001-SEDE-2018" }
+];
+
+const ANSWERS = {
+  calibre: {
+    kind:"answer",
+    summary:"Usa conductor de cobre calibre 10 AWG. Es el mínimo que soporta 30 A y el máximo que admite protección de 30 A sin excepciones.",
+    paragraphs:[
+      "El calibre se determina por la ampacidad requerida: el conductor no puede tener una capacidad menor que la del dispositivo de protección del circuito derivado. Para 30 A, el cobre 10 AWG con aislamiento de 60 °C entrega exactamente 30 A según la tabla de ampacidades.",
+      "Si el circuito lleva más de tres conductores portadores en la misma canalización, o la temperatura ambiente supera los 30 °C, aplica los factores de ajuste y corrección antes de cerrar el calibre: con seis conductores portadores el 10 AWG cae a 24 A y ya no cumple, y debes subir a 8 AWG.",
+      "La temperatura del terminal del equipo también limita: aunque el aislamiento sea de 90 °C, si el interruptor está marcado para 60 °C, el cálculo se hace en la columna de 60 °C."
+    ],
+    citations: CITES,
+    confidence: 3,
+    confidenceLabel:"Alta",
+    confidenceNote:"3 de 3 citas concuerdan"
+  },
+  tierra: {
+    kind:"answer",
+    summary:"El electrodo de puesta a tierra en vivienda debe conectarse con conductor de cobre no menor a 8 AWG, y todo el sistema debe quedar unido a un solo punto de tierra.",
+    paragraphs:[
+      "La norma exige un sistema de electrodos único: varilla, tubería metálica de agua enterrada y acero estructural, cuando existan, deben unirse entre sí. El conductor del electrodo se dimensiona por el calibre del conductor de acometida.",
+      "En instalación residencial típica con acometida de 2/0 AWG cobre, el conductor del electrodo resulta 4 AWG cobre."
+    ],
+    citations:[
+      { mark:"[1]", ref:"Cap. 2 · Art. 250-50", title:"Sistema de electrodos de puesta a tierra",
+        quote:"Todos los electrodos descritos en 250-52(A)(1) a (A)(7) que estén presentes en cada edificio o estructura servida deben unirse entre sí para formar el sistema de electrodos de puesta a tierra.",
+        page:"p. 186 · NOM-001-SEDE-2018" },
+      { mark:"[2]", ref:"Cap. 2 · Tabla 250-66", title:"Conductor del electrodo de puesta a tierra",
+        quote:"Conductor de acometida 2/0 o 1/0 AWG cobre: conductor del electrodo de puesta a tierra 4 AWG cobre.",
+        page:"p. 191 · NOM-001-SEDE-2018" }
+    ],
+    confidence: 2,
+    confidenceLabel:"Media",
+    confidenceNote:"2 citas · depende de la acometida"
+  },
+  insuficiente: {
+    kind:"insufficient",
+    summary:"La norma no fija una distancia entre tablero y muro en esos términos.",
+    detail:"Lo que sí regula es el espacio de trabajo frente al equipo eléctrico: profundidad libre, ancho y altura del espacio de acceso, medidos desde las partes vivas. No encontré ningún artículo que establezca una separación posterior o lateral del tablero respecto al muro para instalaciones de menos de 600 V.",
+    suggestions:[
+      "¿Qué espacio de trabajo se requiere frente a un tablero de 240 V?",
+      "¿Cuál es la altura mínima del espacio de acceso a un tablero?"
+    ]
+  }
+};
+
+const EXAMPLES = [
+  "¿Qué calibre de conductor debo usar para un circuito derivado de 30 A?",
+  "Requisitos de puesta a tierra en instalación residencial",
+  "Distancia mínima entre tablero y muro",
+  "Protección requerida en circuitos de alumbrado comercial",
+  "Cálculo de factor de demanda para vivienda unifamiliar"
+];
+
+const HISTORY_SEED = [
+  "Calibre para circuito derivado de 30 A",
+  "Puesta a tierra en instalación residencial",
+  "Alumbrado comercial — protección",
+  "Factor de demanda, vivienda unifamiliar",
+  "Canalización en área clasificada"
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: "login",
+    email: "", pass: "", name: "",
+    error: null,
+    draft: "",
+    messages: [],
+    history: [],
+    historyActive: -1,
+    generating: false,
+    genStep: 0,
+    reveal: 3,
+    openCites: {},
+    sidebarOpen: true,
+    view: "chat",
+    noticeOpen: true,
+    width: 1280,
+    threadTitle: "Nueva consulta"
+  };
+
+  componentDidMount() {
+    const setW = () => this.setState({ width: window.innerWidth });
+    setW();
+    window.addEventListener("resize", setW);
+    this._setW = setW;
+    if (this.props.screen && this.props.screen !== "login") this.setState({ screen: this.props.screen });
+    if (this.props.startPopulated) this.loadDemo();
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this._setW);
+    (this._timers || []).forEach(clearTimeout);
+  }
+  later(fn, ms) { (this._timers = this._timers || []).push(setTimeout(fn, ms)); }
+
+  key(q) {
+    const s = q.toLowerCase();
+    if (s.includes("simular error")) return "error";
+    if (s.includes("muro") || s.includes("tablero y")) return "insuficiente";
+    if (s.includes("tierra")) return "tierra";
+    return "calibre";
+  }
+  topic(q) {
+    const s = q.toLowerCase();
+    if (s.includes("muro")) return "Distancia tablero – muro";
+    if (s.includes("tierra")) return "Puesta a tierra residencial";
+    if (s.includes("calibre") || s.includes("30 a")) return "Calibre para circuito de 30 A";
+    return q.length > 38 ? q.slice(0, 38) + "…" : q;
+  }
+
+  ask = (q, force) => {
+    if (!q || !q.trim()) return;
+    const text = q.trim();
+    const kind = force || this.key(text);
+    const msgs = this.state.messages.concat([{ kind: "user", text }]);
+    const hist = [this.topic(text)].concat(this.state.history.filter(h => h !== this.topic(text)));
+    this.setState({ messages: msgs, draft: "", generating: true, genStep: 0, reveal: 0, history: hist, historyActive: 0, threadTitle: this.topic(text), openCites: {}, view: "chat", noticeOpen: false });
+    this.later(() => this.setState({ genStep: 1 }), 700);
+    this.later(() => {
+      const ans = kind === "error" ? { kind: "error", query: text } : Object.assign({}, ANSWERS[kind]);
+      this.setState(s => ({ generating: false, reveal: 1, messages: s.messages.concat([ans]) }));
+      this.later(() => this.setState({ reveal: 2 }), 550);
+      this.later(() => this.setState({ reveal: 3 }), 1100);
+    }, 1600);
+  };
+
+  loadError = () => {
+    const q = EXAMPLES[3];
+    this.setState({
+      screen: "chat", view: "chat", noticeOpen: false,
+      messages: [{ kind: "user", text: q }, { kind: "error", query: q }],
+      history: [this.topic(q)].concat(HISTORY_SEED.slice(0, 3)), historyActive: 0, reveal: 3, threadTitle: this.topic(q)
+    });
+  };
+
+  loadDemo = () => {
+    this.setState({
+      screen: "chat",
+      messages: [{ kind: "user", text: EXAMPLES[0] }, Object.assign({}, ANSWERS.calibre)],
+      history: HISTORY_SEED, historyActive: 0, reveal: 3, threadTitle: HISTORY_SEED[0], view: "chat", noticeOpen: false
+    });
+  };
+
+  renderVals() {
+    const st = this.state;
+    const isMobile = st.width < 860;
+    const screen = st.screen;
+    const isLogin = screen === "login", isRegister = screen === "register";
+    const err = st.error;
+
+    const messages = st.messages.map((m, i) => {
+      const last = i === st.messages.length - 1;
+      const rv = last ? st.reveal : 3;
+      if (m.kind === "user") return { isUser: true, text: m.text };
+      if (m.kind === "insufficient") return {
+        isInsufficient: true, summary: m.summary, detail: m.detail,
+        suggestions: m.suggestions.map(t => ({ text: t, onPick: () => this.ask(t) }))
+      };
+      if (m.kind === "error") return { isError: true, onRetry: () => { const q = m.query || st.threadTitle; this.setState(s => ({ messages: s.messages.slice(0, -1) })); this.ask(q, "calibre"); } };
+      const conf = m.confidence || 3;
+      return {
+        isAnswer: true,
+        summary: m.summary,
+        showExplanation: rv >= 2,
+        paragraphs: (m.paragraphs || []).map(t => ({ text: t })),
+        showCitations: rv >= 3,
+        citeCount: m.citations.length + (m.citations.length === 1 ? " referencia" : " referencias"),
+        citations: m.citations.map((c, ci) => {
+          const k = i + "-" + ci;
+          const open = !!st.openCites[k];
+          return Object.assign({}, c, {
+            open, toggleLabel: open ? "Ocultar" : "Ver texto",
+            rowStyle: "border-bottom:" + (ci === m.citations.length - 1 ? "none" : "1px solid #EDEDEA"),
+            onToggle: () => this.setState(s => ({ openCites: Object.assign({}, s.openCites, { [k]: !s.openCites[k] }) }))
+          });
+        }),
+        confidenceBars: [0, 1, 2].map(n => ({
+          style: "width:14px;height:7px;background:" + (n < conf ? "#16181A" : "transparent") + ";border:1px solid " + (n < conf ? "#16181A" : "#C9C9C4")
+        })),
+        confidenceLabel: m.confidenceLabel,
+        confidenceNote: m.confidenceNote
+      };
+    });
+
+    const navDefs = [["login", "Acceso"], ["register", "Registro"], ["chat", "Chat"], ["demo", "Con respuesta"], ["fail", "Error"], ["about", "Acerca"]];
+
+    return {
+      isAuth: isLogin || isRegister,
+      isChat: screen === "chat",
+      isLogin, isRegister,
+      authTitle: isRegister ? "Crear cuenta" : "Iniciar sesión",
+      authSubtitle: isRegister ? "Acceso a la consulta técnica de la NOM-001-SEDE." : "Consulta técnica sobre la NOM-001-SEDE.",
+      authCta: isRegister ? "Crear cuenta" : "Entrar",
+      authSwitchLabel: isRegister ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?",
+      authSwitchCta: isRegister ? "Inicia sesión" : "Crea una",
+      onSwitchAuth: (e) => { e.preventDefault(); this.setState({ screen: isRegister ? "login" : "register", error: null }); },
+      emailVal: st.email, passVal: st.pass, nameVal: st.name,
+      onEmail: e => this.setState({ email: e.target.value }),
+      onPass: e => this.setState({ pass: e.target.value }),
+      onName: e => this.setState({ name: e.target.value }),
+      onAuthKey: e => { if (e.key === "Enter") this.submit(isRegister); },
+      onSubmit: () => this.submit(isRegister),
+      formError: !!err,
+      formErrorTitle: err && err.title,
+      formErrorHelp: err && err.help,
+
+      sidebarVisible: !isMobile || st.sidebarOpen,
+      showMenuButton: isMobile && !st.sidebarOpen,
+      isMobile,
+      sidebarStyle: (isMobile
+        ? "position:fixed;inset:0 auto 0 0;width:300px;z-index:40;box-shadow:0 0 0 100vw rgba(22,24,26,.28);"
+        : "width:274px;flex:none;") + "background:#F7F7F4;border-right:1px solid #E4E4E1;display:flex;flex-direction:column;height:100%;overflow:hidden",
+      toggleSidebar: () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen })),
+      onNewQuery: () => this.setState({ messages: [], reveal: 3, threadTitle: "Nueva consulta", historyActive: -1, generating: false, sidebarOpen: !isMobile, view: "chat", noticeOpen: true }),
+
+      calculators: [1, 2, 3].map(n => ({ label: "Calculadora " + n })),
+
+      viewIsChat: st.view === "chat",
+      viewIsAbout: st.view === "about",
+      onAbout: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ view: "about", sidebarOpen: !isMobile }); },
+      onBackToChat: () => this.setState({ view: "chat" }),
+      aboutNavStyle: "display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:" + (st.view === "about" ? "#EAEAE5" : "none") + ";border:none;padding:8px 10px;font-size:13.5px;color:" + (st.view === "about" ? "#16181A" : "#55595E") + ";cursor:pointer;font-weight:" + (st.view === "about" ? "500" : "400"),
+
+      sessionNorm: SESSION_NORM,
+      sessionDate: SESSION_DATE,
+      noticeOpen: st.noticeOpen,
+      noticeCollapsed: !st.noticeOpen,
+      toggleNotice: () => this.setState(s => ({ noticeOpen: !s.noticeOpen })),
+
+      coverCols: isMobile ? "1fr" : "1fr 1fr",
+      sourcesFootnote: SOURCES.length + " documentos incorporados · última actualización del índice: 12 mar 2026",
+      sources: SOURCES.map((s, i) => {
+        const vigente = s.estado === "vigente";
+        return {
+          clave: s.clave, nombre: s.nombre, nota: s.nota,
+          estado: vigente ? "Vigente" : (s.estado === "transición" ? "En transición" : "Sustituida"),
+          rowStyle: "padding:18px;border-bottom:" + (i === SOURCES.length - 1 ? "none" : "1px solid #EDEDEA") + (vigente ? "" : ";background:#FAFAF8"),
+          markStyle: "width:8px;height:8px;" + (vigente ? "background:#16181A" : "border:1.5px solid #A2A6AA"),
+          estadoStyle: "font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:" + (vigente ? "#16181A" : "#8A8F95") + ";font-weight:" + (vigente ? "500" : "400"),
+          fields: [
+            { label: "Versión", value: s.version },
+            { label: "Publicación oficial", value: s.publicacion },
+            { label: "Incorporada al sistema", value: s.incorporada }
+          ]
+        };
+      }),
+      covers: [
+        "Qué exige la norma sobre un caso concreto: calibres, protecciones, puesta a tierra, canalizaciones, espacios de trabajo.",
+        "Localizar el artículo o la tabla aplicable y leer su texto literal.",
+        "Comparar requisitos entre secciones y entender de qué depende un valor.",
+        "Verificar si un criterio que ya traías está respaldado por el texto normativo."
+      ].map(t => ({ text: t })),
+      notCovers: [
+        "Cálculos de proyecto: memorias, cuadros de carga, dimensionamiento completo de una instalación.",
+        "Dictámenes, aprobaciones o cualquier documento con validez ante una unidad de verificación.",
+        "Verificación de instalaciones existentes: eso requiere inspección física.",
+        "Normas no incorporadas al sistema, reglamentos locales y criterios de la compañía suministradora."
+      ].map(t => ({ text: t })),
+      anatomy: [
+        { num: "01", name: "Resumen", text: "La respuesta directa, en una o dos frases. Si solo lees una parte, lee esta." },
+        { num: "02", name: "Explicación", text: "El desarrollo técnico: de qué depende el valor, qué factores lo modifican y cuándo deja de aplicar." },
+        { num: "03", name: "Citas", text: "Capítulo, artículo y página de donde salió cada afirmación. Se abren en línea para leer el texto literal sin salir de la conversación." },
+        { num: "04", name: "Confianza", text: "Qué tan sustentada está la respuesta en el texto recuperado. No mide qué tan correcta es la instalación que estás proyectando." }
+      ],
+      confidenceLevels: [
+        { n: 3, label: "Alta", text: "Varias citas concordantes que responden directamente la consulta. Verifica las citas y aplica." },
+        { n: 2, label: "Media", text: "El texto responde, pero el valor depende de condiciones que la consulta no especificó. Lee la explicación completa antes de aplicar." },
+        { n: 1, label: "Baja", text: "El respaldo es parcial o indirecto. Trátala como punto de partida: abre las citas, verifica en el documento oficial y consulta a un profesional responsable." }
+      ].map((l, i) => ({
+        label: l.label, text: l.text,
+        rowStyle: "display:flex;gap:14px;padding:14px 16px;border-bottom:" + (i === 2 ? "none" : "1px solid #EDEDEA"),
+        bars: [0, 1, 2].map(n => ({ style: "width:14px;height:7px;background:" + (n < l.n ? "#16181A" : "transparent") + ";border:1px solid " + (n < l.n ? "#16181A" : "#C9C9C4") }))
+      })),
+      disclaimer: [
+        { title: "Qué hace el sistema", text: "Recupera fragmentos del texto normativo incorporado y redacta una respuesta a partir de ellos. Todo lo que afirma debe poder rastrearse a una cita; si no hay respaldo suficiente, lo declara en lugar de completar el hueco." },
+        { title: "Qué no hace", text: "No emite criterio profesional ni dictamen técnico, no aprueba ni rechaza instalaciones, y no sustituye al perito o al responsable de la obra. Tampoco considera reglamentos locales ni requisitos de la compañía suministradora." },
+        { title: "Errores posibles", text: "La redacción automática puede citar un artículo que no aplica al caso, omitir una excepción o arrastrar un valor de una tabla equivocada. Por eso cada respuesta trae la referencia: verifica siempre contra el texto oficial publicado antes de aplicar cualquier resultado." },
+        { title: "Responsabilidad", text: "La decisión técnica y su ejecución son del profesional que las firma. El uso de esta herramienta no transfiere esa responsabilidad." }
+      ],
+      onLogout: () => this.setState({ screen: "login", messages: [], history: [], pass: "" }),
+      noop: e => e && e.preventDefault && e.preventDefault(),
+
+      hasHistory: st.history.length > 0,
+      noHistory: st.history.length === 0,
+      history: st.history.map((h, i) => ({
+        topic: h,
+        style: "width:100%;text-align:left;background:" + (i === st.historyActive ? "#EAEAE5" : "none") +
+          ";border:none;border-left:2px solid " + (i === st.historyActive ? "#6B5BA6" : "transparent") +
+          ";padding:8px 10px;font-size:13px;color:" + (i === st.historyActive ? "#16181A" : "#55595E") +
+          ";cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:" + (i === st.historyActive ? "500" : "400"),
+        onOpen: () => this.setState({ historyActive: i, threadTitle: h, sidebarOpen: !isMobile })
+      })),
+
+      threadTitle: st.threadTitle,
+      isEmpty: st.messages.length === 0 && !st.generating,
+      examples: EXAMPLES.map((t, i) => ({ text: t, num: String(i + 1).padStart(2, "0"), onPick: () => this.ask(t) })),
+      messages,
+      generating: st.generating,
+      generatingLabel: st.genStep === 0 ? "Buscando en el texto de la norma…" : "Redactando respuesta y verificando citas…",
+      pulseStyle: "width:8px;height:8px;background:#6B5BA6;animation:nomPulse 1.1s ease-in-out infinite",
+
+      draft: st.draft,
+      onDraft: e => this.setState({ draft: e.target.value }),
+      onDraftKey: e => { if (e.key === "Enter") this.ask(this.state.draft); },
+      onSend: () => this.ask(this.state.draft),
+      sendStyle: "border:none;background:" + (st.draft.trim() ? "#16181A" : "#E4E4E1") + ";color:" + (st.draft.trim() ? "#FFF" : "#A2A6AA") +
+        ";padding:0 18px;font-size:14px;font-weight:500;cursor:" + (st.draft.trim() ? "pointer" : "default"),
+
+      navStyle: "position:fixed;z-index:60;display:flex;gap:1px;background:#16181A;padding:3px;box-shadow:0 6px 20px rgba(22,24,26,.18);" + ((isLogin || isRegister) ? (st.width < 560 ? "top:10px;left:50%;transform:translateX(-50%)" : "top:12px;left:12px") : "bottom:52px;right:16px"),
+      navItems: navDefs.map(([id, label]) => {
+        const inChat = screen === "chat" && st.view === "chat";
+        const active = id === "about" ? (screen === "chat" && st.view === "about")
+          : id === "fail" ? (inChat && st.messages.length > 0 && st.messages[st.messages.length - 1].kind === "error")
+          : id === "demo" ? (inChat && st.messages.length > 0 && st.messages[st.messages.length - 1].kind !== "error")
+          : (screen === id && !(id === "chat" && (st.messages.length > 0 || st.view === "about")));
+        return {
+          label,
+          style: "background:" + (active ? "#FBFBFA" : "transparent") + ";color:" + (active ? "#16181A" : "#B6B9BC") +
+            ";border:none;padding:5px 11px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer",
+          onPick: () => id === "demo" ? this.loadDemo()
+            : id === "fail" ? this.loadError()
+            : id === "about" ? this.setState({ screen: "chat", view: "about", error: null, history: st.history.length ? st.history : HISTORY_SEED })
+            : this.setState({ screen: id, error: null, view: "chat", threadTitle: id === "chat" ? "Nueva consulta" : st.threadTitle, historyActive: id === "chat" ? -1 : st.historyActive, noticeOpen: id === "chat" ? true : st.noticeOpen, messages: id === "chat" ? [] : st.messages, history: id === "chat" ? [] : st.history })
+        };
+      })
+    };
+  }
+
+  submit(isRegister) {
+    const { email, pass, name } = this.state;
+    if (isRegister) {
+      if (email.trim().toLowerCase() === "rmartinez@iepsa.mx") return this.setState({ error: { title: "Ese correo ya tiene cuenta", help: "Inicia sesión con él o usa otro correo para registrarte." } });
+      if (pass.length < 8 || !/[0-9]/.test(pass)) return this.setState({ error: { title: "La contraseña no cumple los requisitos", help: "Necesita al menos 8 caracteres e incluir un número." } });
+      if (!name.trim() || !email.trim()) return this.setState({ error: { title: "Faltan datos para crear la cuenta", help: "Completa nombre y correo antes de continuar." } });
+      return this.setState({ screen: "chat", error: null, messages: [], history: [] });
+    }
+    if (!email.trim() || !pass) return this.setState({ error: { title: "Faltan credenciales", help: "Escribe tu correo y contraseña para entrar." } });
+    if (pass !== "nom2012") return this.setState({ error: { title: "Correo o contraseña incorrectos", help: "Revisa la contraseña; si no la recuerdas, usa Recuperar acceso. En esta demo la contraseña es nom2012." } });
+    this.setState({ screen: "chat", error: null, messages: [], history: HISTORY_SEED, historyActive: -1 });
+  }
+}
+
+</script>
+</body>
+</html>
