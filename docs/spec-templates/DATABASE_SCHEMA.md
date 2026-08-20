@@ -1,24 +1,24 @@
-# Esquema de base de datos
+# Database schema
 
-> Plantilla. Documenta aquí el esquema real antes de crear las migraciones.
+> Template. Document the real schema here before you create the migrations.
 
-## Tablas
+## Tables
 
 ### `items`
 
-| Columna | Tipo | Restricciones |
+| Column | Type | Constraints |
 | --- | --- | --- |
 | `id` | `uuid` | PK, `default gen_random_uuid()` |
-| `user_id` | `uuid` | `not null`, FK a `auth.users(id)` `on delete cascade` |
+| `user_id` | `uuid` | `not null`, FK to `auth.users(id)` `on delete cascade` |
 | `name` | `text` | `not null`, `check (char_length(name) between 1 and 100)` |
 | `created_at` | `timestamptz` | `not null default now()` |
 | `updated_at` | `timestamptz` | `not null default now()` |
 
-Índices: uno por cada clave foránea (`items_user_id_idx`), más los que exija cada consulta de lista.
+Indexes: one for every foreign key (`items_user_id_idx`), plus the ones each list query requires.
 
 ## Row Level Security
 
-Cada tabla con `user_id` lleva RLS activo y cuatro políticas (select, insert, update, delete). Envuelve la función de sesión en un subselect para que el planificador la evalúe una sola vez:
+Every table with a `user_id` column runs RLS with four policies: select, insert, update, and delete. Wrap the session function in a subselect, so the planner evaluates it once:
 
 ```sql
 alter table public.items enable row level security;
@@ -30,9 +30,9 @@ create policy "items_select_own" on public.items
 
 ## Triggers
 
-- `updated_at`: trigger `before update` que escribe `now()`.
-- Alta de usuario: trigger `after insert on auth.users` si el proyecto necesita crear filas iniciales.
+- `updated_at`: a `before update` trigger that writes `now()`.
+- User creation: an `after insert on auth.users` trigger, when the project must create initial rows.
 
-## Migraciones
+## Migrations
 
-Una migración por cambio, en `supabase/migrations/`, nunca editada después de aplicarse. Verifica con `mcp__supabase__get_advisors` que no queden tablas sin RLS ni claves foráneas sin índice.
+Write one migration per change, in `supabase/migrations/`. Never edit a migration after you apply it. Run `mcp__supabase__get_advisors` to verify that no table lacks RLS and no foreign key lacks an index.

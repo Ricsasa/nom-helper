@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#FBFBFA; }
+  * { box-sizing:border-box; }
+  a { color:#2E7D5B; text-decoration:none; }
+  a:hover { color:#1F5A41; text-decoration:underline; }
+  input, button, textarea { font-family:inherit; }
+  ::placeholder { color:#A2A6AA; }
+  @keyframes nomPulse { 0%,100% { opacity:.25 } 50% { opacity:1 } }
+</style>
+</helmet>
+<div style="font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16181A;background:#FBFBFA;min-height:100vh;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased">
+
+  <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(22,24,26,.4);z-index:80;display:flex;align-items:center;justify-content:center;padding:24px" onClick="{{ onScrimClick }}">
+      <div style="width:100%;max-width:520px;max-height:min(88vh,720px);background:#FBFBFA;border:1px solid #E4E4E1;display:flex;flex-direction:column;overflow:hidden" onClick="{{ stop }}">
+
+        <div style="flex:none;border-bottom:1px solid #E4E4E1;padding:16px 20px;display:flex;align-items:center;gap:12px">
+          <div style="font-size:15px;font-weight:600">{{ t.settingsTitle }}</div>
+          <button onClick="{{ onCloseSettings }}" style="margin-left:auto;background:none;border:none;font-size:16px;color:#55595E;cursor:pointer;padding:2px 4px" style-hover="color:#16181A">✕</button>
+        </div>
+
+        <div style="flex:1;overflow-y:auto;padding:20px">
+
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;margin-bottom:12px">{{ t.secAccount }}</div>
+
+          <div style="display:flex;flex-direction:column;gap:16px;padding-bottom:22px;border-bottom:1px solid #E4E4E1">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="display:flex;align-items:baseline;font-size:12.5px;font-weight:500;color:#55595E">
+                <span>{{ t.fieldName }}</span>
+                <span style="{{ st_name.style }}">{{ st_name.text }}</span>
+              </span>
+              <span style="display:flex;gap:8px">
+                <input type="text" value="{{ st_name.val }}" onChange="{{ st_name.onChange }}" style="flex:1;border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+                <button onClick="{{ st_name.onSave }}" style="{{ st_name.saveStyle }}">{{ t.save }}</button>
+              </span>
+            </label>
+
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="display:flex;align-items:baseline;font-size:12.5px;font-weight:500;color:#55595E">
+                <span>{{ t.fieldEmail }}</span>
+                <span style="{{ st_email.style }}">{{ st_email.text }}</span>
+              </span>
+              <span style="display:flex;gap:8px">
+                <input type="email" value="{{ st_email.val }}" onChange="{{ st_email.onChange }}" style="flex:1;border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+                <button onClick="{{ st_email.onSave }}" style="{{ st_email.saveStyle }}">{{ t.confirm }}</button>
+              </span>
+              <sc-if value="{{ st_email.error }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:12.5px;color:#7A3520">{{ st_email.error }}</span>
+              </sc-if>
+            </label>
+
+            <div>
+              <span style="display:flex;align-items:baseline;font-size:12.5px;font-weight:500;color:#55595E">
+                <span>{{ t.fieldLanguage }}</span>
+                <span style="{{ st_lang.style }}">{{ st_lang.text }}</span>
+              </span>
+              <div style="display:flex;gap:1px;margin-top:6px">
+                <sc-for list="{{ langOptions }}" as="lo" hint-placeholder-count="2">
+                  <button onClick="{{ lo.onPick }}" style="{{ lo.chipStyle }}">{{ lo.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div>
+              <span style="font-size:12.5px;font-weight:500;color:#55595E">{{ t.fieldPassword }}</span>
+              <sc-if value="{{ pwIsClosed }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:12px;margin-top:6px">
+                  <span style="font-size:14px;color:#16181A;letter-spacing:2px">••••••••</span>
+                  <button onClick="{{ onOpenPw }}" style="background:none;border:none;padding:0;font-size:13px;color:#55595E;text-decoration:underline;text-underline-offset:3px;cursor:pointer" style-hover="color:#16181A">{{ t.changePassword }}</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ pwIsOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;border:1px solid #E4E4E1;background:#FFFFFF;padding:14px">
+                  <input type="password" value="{{ pw.current }}" onChange="{{ pw.onCurrent }}" placeholder="{{ t.phCurrentPw }}" style="border:1px solid #D8D8D4;padding:8px 10px;font-size:13.5px;outline:none" style-focus="border-color:#2E7D5B" />
+                  <input type="password" value="{{ pw.next }}" onChange="{{ pw.onNext }}" placeholder="{{ t.phNewPw }}" style="border:1px solid #D8D8D4;padding:8px 10px;font-size:13.5px;outline:none" style-focus="border-color:#2E7D5B" />
+                  <input type="password" value="{{ pw.confirm }}" onChange="{{ pw.onConfirm }}" placeholder="{{ t.phConfirmPw }}" style="border:1px solid #D8D8D4;padding:8px 10px;font-size:13.5px;outline:none" style-focus="border-color:#2E7D5B" />
+                  <sc-if value="{{ pw.error }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:12.5px;color:#7A3520">{{ pw.error }}</div>
+                  </sc-if>
+                  <div style="display:flex;gap:10px;margin-top:2px">
+                    <button onClick="{{ pw.onSave }}" style="background:#16181A;color:#FFF;border:none;padding:8px 14px;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#2E7D5B">{{ t.savePassword }}</button>
+                    <button onClick="{{ pw.onCancel }}" style="background:none;border:1px solid #E0E0DC;padding:8px 12px;font-size:13px;color:#55595E;cursor:pointer">{{ t.cancel }}</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;margin:22px 0 12px">{{ t.secUsage }}</div>
+          <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:22px;border-bottom:1px solid #E4E4E1">
+            <div style="font-size:14px;color:#16181A">{{ usageToday }}</div>
+            <div style="font-size:12.5px;color:#8A8F95">{{ usageReset }}</div>
+          </div>
+
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;margin:22px 0 12px">{{ t.secData }}</div>
+          <div style="display:flex;flex-direction:column;gap:0;border:1px solid #D6D6D2">
+
+            <div style="padding:14px;border-bottom:1px solid #E4E4E1">
+              <sc-if value="{{ delHistIsIdle }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:500">{{ t.delHistTitle }}</div>
+                    <div style="font-size:12.5px;color:#55595E;margin-top:2px">{{ t.delHistDesc }}</div>
+                  </div>
+                  <button onClick="{{ onAskDelHist }}" style="margin-left:auto;background:none;border:1px solid #E0E0DC;padding:6px 11px;font-size:12.5px;color:#16181A;cursor:pointer" style-hover="border-color:#B9BCB8">{{ t.delHistBtn }}</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ delHistIsConfirm }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="font-size:13.5px;color:#16181A">{{ t.delHistConfirm }}</div>
+                  <div style="display:flex;gap:10px;margin-top:10px">
+                    <button onClick="{{ onConfirmDelHist }}" style="background:#16181A;color:#FFF;border:none;padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#2E7D5B">{{ t.delHistConfirmBtn }}</button>
+                    <button onClick="{{ onCancelDelHist }}" style="background:none;border:1px solid #E0E0DC;padding:7px 12px;font-size:13px;color:#55595E;cursor:pointer">{{ t.cancel }}</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ delHistIsDone }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13.5px;color:#55595E">{{ t.delHistDone }}</div>
+              </sc-if>
+            </div>
+
+            <div style="padding:14px">
+              <sc-if value="{{ delAcctIsIdle }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:500">{{ t.delAcctTitle }}</div>
+                    <div style="font-size:12.5px;color:#55595E;margin-top:2px">{{ t.delAcctDesc }}</div>
+                  </div>
+                  <button onClick="{{ onAskDelAcct }}" style="margin-left:auto;background:none;border:1px solid #E0E0DC;padding:6px 11px;font-size:12.5px;color:#16181A;cursor:pointer" style-hover="border-color:#B9BCB8">{{ t.delAcctBtn }}</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ delAcctIsConfirm }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="font-size:13.5px;color:#16181A">{{ t.delAcctConfirm }}</div>
+                  <div style="font-size:13px;color:#55595E;margin-top:8px">{{ t.typePre }} <b>{{ t.deleteWord }}</b> {{ t.typePost }}</div>
+                  <input type="text" value="{{ delAcctVal }}" onChange="{{ onDelAcctChange }}" style="margin-top:8px;border:1px solid #D8D8D4;padding:8px 10px;font-size:13.5px;outline:none;width:160px" style-focus="border-color:#2E7D5B" />
+                  <div style="display:flex;gap:10px;margin-top:10px">
+                    <button onClick="{{ onConfirmDelAcct }}" style="{{ delAcctConfirmStyle }}">{{ t.delAcctFinal }}</button>
+                    <button onClick="{{ onCancelDelAcct }}" style="background:none;border:1px solid #E0E0DC;padding:7px 12px;font-size:13px;color:#55595E;cursor:pointer">{{ t.cancel }}</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <sc-if value="{{ settingsSaveError }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid #D9C9C4;background:#FCF6F4;padding:10px 12px;margin-top:16px;font-size:13px;color:#7A3520">{{ settingsSaveError }}</div>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ true }}">
+    <div style="position:relative;height:100vh;display:flex;flex-direction:column;overflow:hidden">
+      <div style="position:absolute;top:13px;right:14px;z-index:5;display:flex;align-items:center;gap:2px">
+        <sc-for list="{{ langOptions }}" as="lo" hint-placeholder-count="2">
+          <button onClick="{{ lo.onPick }}" style="{{ lo.authStyle }}">{{ lo.label }}</button>
+        </sc-for>
+      </div>
+    <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:safe center;padding:64px 20px 40px;gap:24px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:10px;height:10px;background:#2E7D5B"></div>
+          <div style="width:10px;height:10px;background:#6B5BA6"></div>
+        </div>
+        <div style="font-size:19px;font-weight:600;letter-spacing:-0.01em">NOM Helper</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95;letter-spacing:0.04em;text-transform:uppercase">{{ t.tagline }}</div>
+      </div>
+
+      <div style="width:100%;max-width:396px;background:#FFFFFF;border:1px solid #E4E4E1;padding:32px">
+        <div style="font-size:16px;font-weight:600;margin-bottom:4px">{{ authTitle }}</div>
+        <div style="font-size:13.5px;color:#55595E;margin-bottom:24px">{{ authSubtitle }}</div>
+
+        <sc-if value="{{ formError }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px solid #D9C9C4;background:#FCF6F4;padding:12px 14px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:#8C3A24;margin-top:1px">!</div>
+            <div>
+              <div style="font-size:13.5px;font-weight:500;color:#7A3520">{{ formErrorTitle }}</div>
+              <div style="font-size:13px;color:#6B4A3E;margin-top:2px">{{ formErrorHelp }}</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:12.5px;font-weight:500;color:#55595E;letter-spacing:0.01em">{{ t.fieldName }}</span>
+              <input type="text" value="{{ nameVal }}" onChange="{{ onName }}" placeholder="Ing. Ramiro Martínez" style="border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none;border-radius:0" style-focus="border-color:#2E7D5B" />
+            </label>
+          </sc-if>
+
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:12.5px;font-weight:500;color:#55595E;letter-spacing:0.01em">{{ t.fieldEmailShort }}</span>
+            <input type="email" value="{{ emailVal }}" onChange="{{ onEmail }}" placeholder="nombre@empresa.mx" style="border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+          </label>
+
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:500;color:#55595E">
+              <span>{{ t.fieldPassword }}</span>
+              <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+                <a href="#" onClick="{{ noop }}" style="font-size:12.5px;font-weight:400;color:#55595E;text-decoration:underline;text-underline-offset:2px">{{ t.recover }}</a>
+              </sc-if>
+            </span>
+            <input type="password" value="{{ passVal }}" onChange="{{ onPass }}" onKeyDown="{{ onAuthKey }}" placeholder="••••••••" style="border:1px solid #D8D8D4;background:#FFF;padding:9px 11px;font-size:14px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+            <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95">{{ t.pwHint }}</span>
+            </sc-if>
+          </label>
+
+          <sc-if value="{{ isRegister }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:12.5px;font-weight:500;color:#55595E;letter-spacing:0.01em">{{ t.fieldLanguage }}</span>
+              <div style="display:flex;gap:1px">
+                <sc-for list="{{ langOptions }}" as="lo" hint-placeholder-count="2">
+                  <button onClick="{{ lo.onPick }}" style="{{ lo.formStyle }}">{{ lo.label }}</button>
+                </sc-for>
+              </div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95">{{ t.langFieldHint }}</span>
+            </div>
+          </sc-if>
+
+          <button onClick="{{ onSubmit }}" style="margin-top:4px;background:#16181A;color:#FFF;border:none;padding:11px 14px;font-size:14px;font-weight:500;cursor:pointer;letter-spacing:0.01em" style-hover="background:#2E7D5B">{{ authCta }}</button>
+        </div>
+      </div>
+
+      <div style="font-size:13.5px;color:#55595E">
+        {{ authSwitchLabel }}
+        <a href="#" onClick="{{ onSwitchAuth }}" style="font-weight:500">{{ authSwitchCta }}</a>
+      </div>
+    </div>
+    <div style="flex:none;border-top:1px solid #E4E4E1;background:#F7F7F4;padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:#8A8F95;letter-spacing:0.01em">
+      <span>Made with</span>
+      <span style="font-size:11px;color:#16181A">🖤</span>
+      <span>by</span>
+      <a href="https://rs-studio.dev" style="color:#55595E;font-weight:500;text-decoration:none" style-hover="color:#16181A;text-decoration:underline">rs-studio.dev</a>
+    </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
+    <div style="display:flex;flex:1;min-height:0;overflow:hidden">
+
+      <sc-if value="{{ sidebarVisible }}" hint-placeholder-val="{{ true }}">
+        <div style="{{ sidebarStyle }}">
+          <div style="padding:18px 16px 14px;border-bottom:1px solid #E4E4E1;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="display:flex;gap:3px">
+                <div style="width:8px;height:8px;background:#2E7D5B"></div>
+                <div style="width:8px;height:8px;background:#6B5BA6"></div>
+              </div>
+              <div style="font-size:14.5px;font-weight:600;letter-spacing:-0.01em">NOM Helper</div>
+            </div>
+            <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ toggleSidebar }}" style="background:none;border:none;font-size:16px;color:#55595E;cursor:pointer;padding:2px 4px">✕</button>
+            </sc-if>
+          </div>
+
+          <div style="padding:12px 10px;border-bottom:1px solid #E4E4E1;display:flex;flex-direction:column;gap:2px;flex:none">
+            <button onClick="{{ onNewQuery }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;padding:8px 10px;font-size:13.5px;font-weight:500;color:#16181A;cursor:pointer" style-hover="background:#F1F1EE">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#2E7D5B;width:12px;display:inline-block">+</span>
+              {{ t.newQuery }}
+            </button>
+            <div style="display:flex;align-items:center;gap:10px;padding:14px 10px 6px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#6B5BA6;width:12px;display:inline-block">×÷</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ t.calculators }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1px;padding-bottom:6px">
+              <sc-for list="{{ calculators }}" as="c" hint-placeholder-count="3">
+                <button onClick="{{ noop }}" style="display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;background:none;border:none;padding:7px 10px 7px 32px;font-size:13.5px;color:#55595E;cursor:pointer" style-hover="background:#F1F1EE;color:#16181A">
+                  <span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                </button>
+              </sc-for>
+            </div>
+            <button onClick="{{ onAbout }}" style="{{ aboutNavStyle }}">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#8A8F95;width:12px;display:inline-block">§</span>
+              {{ t.aboutNav }}
+            </button>
+            <sc-if value="{{ isOperator }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ onEnterOps }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;padding:8px 10px;font-size:13.5px;color:#55595E;cursor:pointer" style-hover="background:#F1F1EE;color:#16181A">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#8A8F95;width:12px;display:inline-block">◫</span>
+                {{ t.operation }}
+                <span style="{{ opsBadgeStyle }}">{{ opsBadge }}</span>
+              </button>
+            </sc-if>
+          </div>
+
+          <div style="flex:1;overflow-y:auto;padding:14px 10px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;padding:0 10px 8px">{{ t.historyLabel }}</div>
+            <sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:1px">
+                <sc-for list="{{ history }}" as="h" hint-placeholder-count="4">
+                  <button onClick="{{ h.onOpen }}" style="{{ h.style }}">{{ h.topic }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px dashed #DCDCD8;padding:14px;margin:4px 4px 0">
+                <div style="font-size:13px;color:#55595E;line-height:1.5">{{ t.historyEmpty1 }}</div>
+                <div style="font-size:12.5px;color:#8A8F95;margin-top:4px">{{ t.historyEmpty2 }}</div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="border-top:1px solid #E4E4E1;padding:11px 16px 12px;flex:none" title="{{ quotaHint }}">
+            <div style="display:flex;gap:2px;align-items:center">
+              <sc-for list="{{ quotaTicks }}" as="t" hint-placeholder-count="10">
+                <div style="{{ t.style }}"></div>
+              </sc-for>
+            </div>
+            <div style="{{ quotaTextStyle }}">{{ quotaText }}</div>
+          </div>
+
+          <div style="border-top:1px solid #E4E4E1;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none">
+            <button onClick="{{ onOpenSettings }}" style="min-width:0;text-align:left;background:none;border:none;padding:0;cursor:pointer;flex:1" style-hover="opacity:.75">
+              <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ accountName }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ accountEmail }}</div>
+            </button>
+            <button onClick="{{ onLogout }}" style="background:none;border:1px solid #E0E0DC;padding:5px 9px;font-size:12px;color:#55595E;cursor:pointer;white-space:nowrap" style-hover="border-color:#B9BCB8;color:#16181A">{{ t.logout }}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0;background:#FBFBFA">
+
+      <sc-if value="{{ viewIsAbout }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0">
+          <div style="height:53px;flex:none;border-bottom:1px solid #E4E4E1;display:flex;align-items:center;gap:12px;padding:0 20px">
+            <sc-if value="{{ showMenuButton }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ toggleSidebar }}" style="background:none;border:1px solid #E0E0DC;padding:5px 9px;font-size:13px;color:#16181A;cursor:pointer">☰</button>
+            </sc-if>
+            <div style="font-size:13.5px;font-weight:500">{{ t.aboutTitle }}</div>
+            <button onClick="{{ onBackToChat }}" style="margin-left:auto;background:none;border:1px solid #E0E0DC;padding:5px 10px;font-size:12.5px;color:#55595E;cursor:pointer" style-hover="border-color:#B9BCB8;color:#16181A">{{ t.backToQuery }}</button>
+          </div>
+
+          <div style="flex:1;overflow-y:auto">
+            <div style="max-width:760px;margin:0 auto;padding:40px 20px 96px">
+
+              <div style="font-size:24px;font-weight:600;letter-spacing:-0.015em">NOM Helper</div>
+              <div style="font-size:15px;color:#2A2D30;margin-top:12px;line-height:1.62;max-width:60ch;text-wrap:pretty">{{ t.aboutP1 }}</div>
+              <div style="font-size:15px;color:#2A2D30;margin-top:12px;line-height:1.62;max-width:60ch;text-wrap:pretty">{{ t.aboutP2 }}</div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:44px 0 14px">
+                <div style="width:7px;height:7px;background:#2E7D5B;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.secStandards }}</div>
+              </div>
+
+              <div style="border:1px solid #E4E4E1;background:#FFFFFF">
+                <sc-for list="{{ sources }}" as="s" hint-placeholder-count="2">
+                  <div style="{{ s.rowStyle }}">
+                    <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 14px">
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:13.5px;font-weight:500;letter-spacing:0.01em">{{ s.clave }}</div>
+                      <div style="display:flex;align-items:center;gap:7px;margin-left:auto">
+                        <div style="{{ s.markStyle }}"></div>
+                        <div style="{{ s.estadoStyle }}">{{ s.estado }}</div>
+                      </div>
+                    </div>
+                    <div style="font-size:14px;color:#2A2D30;margin-top:5px;text-wrap:pretty">{{ s.nombre }}</div>
+                    <sc-if value="{{ s.nota }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:13px;color:#55595E;margin-top:6px;text-wrap:pretty">{{ s.nota }}</div>
+                    </sc-if>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:14px">
+                      <sc-for list="{{ s.fields }}" as="f" hint-placeholder-count="3">
+                        <div>
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ f.label }}</div>
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#16181A;margin-top:3px">{{ f.value }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA;margin-top:9px">{{ sourcesFootnote }}</div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:48px 0 14px">
+                <div style="width:7px;height:7px;background:#6B5BA6;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.secCoverage }}</div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:{{ coverCols }};gap:1px;background:#E4E4E1;border:1px solid #E4E4E1">
+                <div style="background:#FFFFFF;padding:18px">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:12px">{{ t.coverYes }}</div>
+                  <div style="display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ covers }}" as="c" hint-placeholder-count="4">
+                      <div style="display:flex;gap:10px;font-size:13.5px;color:#2A2D30;line-height:1.5;text-wrap:pretty">
+                        <span style="font-family:'IBM Plex Mono',monospace;color:#2E7D5B;flex:none">+</span>
+                        <span>{{ c.text }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="background:#FFFFFF;padding:18px">
+                  <div style="font-size:14px;font-weight:600;margin-bottom:12px">{{ t.coverNo }}</div>
+                  <div style="display:flex;flex-direction:column;gap:9px">
+                    <sc-for list="{{ notCovers }}" as="c" hint-placeholder-count="4">
+                      <div style="display:flex;gap:10px;font-size:13.5px;color:#55595E;line-height:1.5;text-wrap:pretty">
+                        <span style="font-family:'IBM Plex Mono',monospace;color:#A2A6AA;flex:none">–</span>
+                        <span>{{ c.text }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:48px 0 14px">
+                <div style="width:7px;height:7px;background:#2E7D5B;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.secAnatomy }}</div>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:0;border-top:1px solid #E4E4E1">
+                <sc-for list="{{ anatomy }}" as="a" hint-placeholder-count="4">
+                  <div style="display:flex;gap:16px;padding:14px 0;border-bottom:1px solid #E4E4E1">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#6B5BA6;flex:none;width:22px;padding-top:2px">{{ a.num }}</div>
+                    <div style="flex:none;width:112px;font-size:13.5px;font-weight:600">{{ a.name }}</div>
+                    <div style="font-size:13.5px;color:#2A2D30;line-height:1.55;text-wrap:pretty">{{ a.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="font-size:13.5px;font-weight:600;margin:26px 0 10px">{{ t.confLevels }}</div>
+              <div style="border:1px solid #E4E4E1;background:#FFFFFF">
+                <sc-for list="{{ confidenceLevels }}" as="l" hint-placeholder-count="3">
+                  <div style="{{ l.rowStyle }}">
+                    <div style="display:flex;gap:3px;align-items:center;flex:none;padding-top:3px">
+                      <sc-for list="{{ l.bars }}" as="b" hint-placeholder-count="3">
+                        <div style="{{ b.style }}"></div>
+                      </sc-for>
+                    </div>
+                    <div style="flex:none;width:52px;font-size:13.5px;font-weight:600">{{ l.label }}</div>
+                    <div style="font-size:13.5px;color:#2A2D30;line-height:1.55;text-wrap:pretty">{{ l.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex;align-items:baseline;gap:10px;margin:48px 0 14px">
+                <div style="width:7px;height:7px;background:#C9A227;flex:none;transform:translateY(-1px)"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.secDisclaimer }}</div>
+              </div>
+
+              <div style="border:1px solid #E7DCB4;border-left:3px solid #C9A227;background:#FDFAEC;padding:22px 24px;display:flex;flex-direction:column;gap:16px">
+                <sc-for list="{{ disclaimer }}" as="d" hint-placeholder-count="4">
+                  <div>
+                    <div style="font-size:13.5px;font-weight:600;margin-bottom:4px">{{ d.title }}</div>
+                    <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;text-wrap:pretty">{{ d.text }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ viewIsChat }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0">
+        <div style="height:53px;flex:none;border-bottom:1px solid #E4E4E1;display:flex;align-items:center;gap:12px;padding:0 20px;background:#FBFBFA">
+          <sc-if value="{{ showMenuButton }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toggleSidebar }}" style="background:none;border:1px solid #E0E0DC;padding:5px 9px;font-size:13px;color:#16181A;cursor:pointer">☰</button>
+          </sc-if>
+          <div style="font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ threadTitle }}</div>
+          <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;letter-spacing:0.04em;white-space:nowrap">NOM-001-SEDE-2018</div>
+        </div>
+
+        <div style="flex:1;overflow-y:auto">
+          <div style="max-width:720px;margin:0 auto;padding:22px 20px 0">
+            <sc-if value="{{ noticeOpen }}" hint-placeholder-val="{{ true }}">
+              <div style="border:1px solid #E7DCB4;border-left:3px solid #C9A227;background:#FDFAEC;padding:16px 18px">
+                <div style="display:flex;align-items:baseline;gap:10px">
+                  <div style="width:8px;height:8px;background:#C9A227;flex:none;transform:translateY(-1px)"></div>
+                  <div style="font-size:14px;font-weight:600;letter-spacing:-0.005em">{{ t.noticeTitle }}</div>
+                  <button onClick="{{ toggleNotice }}" style="margin-left:auto;background:none;border:none;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#55595E;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px">{{ t.collapse }}</button>
+                </div>
+                <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;margin-top:10px;text-wrap:pretty">{{ t.noticeL1a }} {{ sessionNorm }}{{ t.noticeL1b }} {{ sessionDate }}.</div>
+                <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;margin-top:8px;text-wrap:pretty">{{ t.noticeL2 }}</div>
+                <div style="font-size:13.5px;color:#2A2D30;line-height:1.6;margin-top:8px;text-wrap:pretty">{{ t.noticeL3 }}</div>
+                <a href="#" onClick="{{ onAbout }}" style="display:inline-block;font-size:13px;font-weight:500;margin-top:14px;color:#6B5312;text-decoration:underline;text-underline-offset:3px">{{ t.noticeLink }}</a>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noticeCollapsed }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ toggleNotice }}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#FDFAEC;border:1px solid #E7DCB4;border-left:3px solid #C9A227;padding:8px 12px;cursor:pointer" style-hover="background:#FAF5DE">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#16181A">{{ sessionNorm }} · {{ t.inEffectSince }} {{ sessionDate }}</span>
+                <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6B5312">{{ t.seeNotice }}</span>
+              </button>
+            </sc-if>
+          </div>
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="max-width:720px;margin:0 auto;padding:56px 20px 40px">
+              <div style="font-size:23px;font-weight:600;letter-spacing:-0.015em">{{ t.emptyTitle }}</div>
+              <div style="font-size:14.5px;color:#55595E;margin-top:8px;max-width:52ch;text-wrap:pretty">{{ t.emptySub }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;margin:34px 0 10px">{{ t.examplesLabel }}</div>
+              <div style="border-top:1px solid #E4E4E1">
+                <sc-for list="{{ examples }}" as="ex" hint-placeholder-count="5">
+                  <button onClick="{{ ex.onPick }}" style="display:flex;gap:14px;align-items:baseline;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #E4E4E1;padding:13px 8px;font-size:14px;color:#16181A;cursor:pointer" style-hover="background:#F4F4F1">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#6B5BA6;flex:none">{{ ex.num }}</span>
+                    <span style="text-wrap:pretty">{{ ex.text }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="max-width:720px;margin:0 auto;padding:28px 20px 40px;display:flex;flex-direction:column;gap:34px">
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="0">
+              <div>
+                <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;justify-content:flex-end">
+                    <div style="background:#FFFFFF;border:1px solid #E4E4E1;padding:11px 14px;font-size:14.5px;max-width:86%;text-wrap:pretty">{{ m.text }}</div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isAnswer }}" hint-placeholder-val="{{ false }}">
+                  <div>
+                    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px">
+                      <div style="width:7px;height:7px;background:#2E7D5B;flex:none;transform:translateY(-1px)"></div>
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.summary }}</div>
+                    </div>
+                    <div style="font-size:17px;line-height:1.5;font-weight:500;letter-spacing:-0.008em;text-wrap:pretty;border-left:2px solid #16181A;padding-left:14px">{{ m.summary }}</div>
+
+                    <sc-if value="{{ m.showExplanation }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:26px">
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;margin-bottom:10px;padding-left:15px">{{ t.explanation }}</div>
+                        <div style="padding-left:15px;display:flex;flex-direction:column;gap:12px">
+                          <sc-for list="{{ m.paragraphs }}" as="p" hint-placeholder-count="2">
+                            <div style="font-size:14.5px;line-height:1.62;color:#2A2D30;text-wrap:pretty">{{ p.text }}</div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <sc-if value="{{ m.showCitations }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:28px;padding-left:15px">
+                        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.citations }}</div>
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA">{{ m.citeCount }}</div>
+                        </div>
+                        <div style="border:1px solid #E4E4E1;background:#FFFFFF">
+                          <sc-for list="{{ m.citations }}" as="c" hint-placeholder-count="3">
+                            <div style="{{ c.rowStyle }}">
+                              <button onClick="{{ c.onToggle }}" style="display:flex;width:100%;text-align:left;gap:12px;align-items:baseline;background:none;border:none;padding:12px 14px;cursor:pointer" style-hover="background:#F7F7F4">
+                                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6B5BA6;flex:none;padding-top:1px">{{ c.mark }}</span>
+                                <span style="flex:1;min-width:0">
+                                  <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#16181A;letter-spacing:0.01em">{{ c.ref }}</span>
+                                  <span style="display:block;font-size:13px;color:#55595E;margin-top:3px">{{ c.title }}</span>
+                                </span>
+                                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;flex:none">{{ c.toggleLabel }}</span>
+                              </button>
+                              <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                                <div style="padding:0 14px 14px 40px">
+                                  <div style="background:#F7F7F4;border-left:2px solid #6B5BA6;padding:11px 13px;font-size:13.5px;line-height:1.6;color:#2A2D30;text-wrap:pretty">{{ c.quote }}</div>
+                                  <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95;margin-top:7px">{{ c.page }}</div>
+                                </div>
+                              </sc-if>
+                            </div>
+                          </sc-for>
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:12px;margin-top:14px;border-top:1px solid #E4E4E1;padding-top:12px">
+                          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.confidence }}</div>
+                          <div style="display:flex;gap:3px;align-items:center">
+                            <sc-for list="{{ m.confidenceBars }}" as="b" hint-placeholder-count="3">
+                              <div style="{{ b.style }}"></div>
+                            </sc-for>
+                          </div>
+                          <div style="font-size:13px;font-weight:600;letter-spacing:0.01em">{{ m.confidenceLabel }}</div>
+                          <div style="font-size:12.5px;color:#8A8F95;font-family:'IBM Plex Mono',monospace">{{ m.confidenceNote }}</div>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <sc-if value="{{ m.showFeedback }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:22px;padding-left:15px">
+                        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px solid #EDEDEA;padding-top:11px">
+                          <button onClick="{{ m.fb.onUp }}" style="{{ m.fb.upStyle }}">
+                            <span style="{{ m.fb.upMark }}"></span>
+                            {{ t.helpful }}
+                          </button>
+                          <button onClick="{{ m.fb.onDown }}" style="{{ m.fb.downStyle }}">
+                            <span style="{{ m.fb.downMark }}"></span>
+                            {{ t.notHelpful }}
+                          </button>
+                          <sc-if value="{{ m.fb.showStatus }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
+                              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95">{{ m.fb.statusText }}</span>
+                              <button onClick="{{ m.fb.onEdit }}" style="background:none;border:none;padding:0;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#55595E;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#16181A">{{ m.fb.editLabel }}</button>
+                            </div>
+                          </sc-if>
+                        </div>
+
+                        <sc-if value="{{ m.fb.showReasons }}" hint-placeholder-val="{{ false }}">
+                          <div style="border:1px solid #E4E4E1;background:#FFFFFF;margin-top:10px">
+                            <div style="display:flex;align-items:baseline;gap:10px;padding:11px 14px;border-bottom:1px solid #EDEDEA">
+                              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.whatFailed }}</div>
+                              <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA">{{ t.optional }}</div>
+                            </div>
+                            <sc-for list="{{ m.fb.reasons }}" as="r" hint-placeholder-count="6">
+                              <button onClick="{{ r.onPick }}" style="{{ r.style }}">
+                                <span style="{{ r.mark }}"></span>
+                                <span style="flex:1;text-wrap:pretty">{{ r.label }}</span>
+                              </button>
+                            </sc-for>
+                            <sc-if value="{{ m.fb.showOther }}" hint-placeholder-val="{{ false }}">
+                              <div style="padding:2px 14px 14px 36px">
+                                <input type="text" value="{{ m.fb.otherVal }}" onChange="{{ m.fb.onOther }}" placeholder="{{ t.phWhatFailed }}" style="width:100%;border:1px solid #D8D8D4;background:#FFF;padding:8px 10px;font-size:13.5px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+                              </div>
+                            </sc-if>
+                            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid #EDEDEA;background:#FAFAF8">
+                              <button onClick="{{ m.fb.onSend }}" style="{{ m.fb.sendStyle }}">{{ t.send }}</button>
+                              <button onClick="{{ m.fb.onSkip }}" style="background:none;border:none;padding:0;font-size:13px;color:#55595E;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#16181A">{{ t.skip }}</button>
+                            </div>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isInsufficient }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid #D6D6D2;background:#FFFFFF">
+                    <div style="border-bottom:1px solid #E4E4E1;padding:11px 16px;display:flex;align-items:center;gap:9px;background:#F4F4F1">
+                      <div style="width:7px;height:7px;border:1.5px solid #16181A;flex:none"></div>
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#16181A;font-weight:500">{{ t.insufficient }}</div>
+                    </div>
+                    <div style="padding:16px">
+                      <div style="font-size:15px;line-height:1.55;text-wrap:pretty">{{ m.summary }}</div>
+                      <div style="font-size:13.5px;color:#55595E;margin-top:10px;line-height:1.6;text-wrap:pretty">{{ m.detail }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;margin:18px 0 8px">{{ t.rephrase }}</div>
+                      <div style="display:flex;flex-direction:column;gap:1px;border-top:1px solid #E4E4E1">
+                        <sc-for list="{{ m.suggestions }}" as="s" hint-placeholder-count="2">
+                          <button onClick="{{ s.onPick }}" style="text-align:left;background:none;border:none;border-bottom:1px solid #E4E4E1;padding:10px 2px;font-size:13.5px;color:#16181A;cursor:pointer" style-hover="color:#2E7D5B">{{ s.text }}</button>
+                        </sc-for>
+                      </div>
+
+                      <sc-if value="{{ m.showFeedback }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top:20px">
+                          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px solid #EDEDEA;padding-top:11px">
+                            <button onClick="{{ m.fb.onUp }}" style="{{ m.fb.upStyle }}">
+                              <span style="{{ m.fb.upMark }}"></span>
+                              {{ t.helpful }}
+                            </button>
+                            <button onClick="{{ m.fb.onDown }}" style="{{ m.fb.downStyle }}">
+                              <span style="{{ m.fb.downMark }}"></span>
+                              {{ t.notHelpful }}
+                            </button>
+                            <sc-if value="{{ m.fb.showStatus }}" hint-placeholder-val="{{ false }}">
+                              <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
+                                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8A8F95">{{ m.fb.statusText }}</span>
+                                <button onClick="{{ m.fb.onEdit }}" style="background:none;border:none;padding:0;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#55595E;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#16181A">{{ m.fb.editLabel }}</button>
+                              </div>
+                            </sc-if>
+                          </div>
+
+                          <sc-if value="{{ m.fb.showReasons }}" hint-placeholder-val="{{ false }}">
+                            <div style="border:1px solid #E4E4E1;background:#FFFFFF;margin-top:10px">
+                              <div style="display:flex;align-items:baseline;gap:10px;padding:11px 14px;border-bottom:1px solid #EDEDEA">
+                                <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.whatFailed }}</div>
+                                <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA">{{ t.optional }}</div>
+                              </div>
+                              <sc-for list="{{ m.fb.reasons }}" as="r" hint-placeholder-count="6">
+                                <button onClick="{{ r.onPick }}" style="{{ r.style }}">
+                                  <span style="{{ r.mark }}"></span>
+                                  <span style="flex:1;text-wrap:pretty">{{ r.label }}</span>
+                                </button>
+                              </sc-for>
+                              <sc-if value="{{ m.fb.showOther }}" hint-placeholder-val="{{ false }}">
+                                <div style="padding:2px 14px 14px 36px">
+                                  <input type="text" value="{{ m.fb.otherVal }}" onChange="{{ m.fb.onOther }}" placeholder="{{ t.phWhatFailed }}" style="width:100%;border:1px solid #D8D8D4;background:#FFF;padding:8px 10px;font-size:13.5px;color:#16181A;outline:none" style-focus="border-color:#2E7D5B" />
+                                </div>
+                              </sc-if>
+                              <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid #EDEDEA;background:#FAFAF8">
+                                <button onClick="{{ m.fb.onSend }}" style="{{ m.fb.sendStyle }}">{{ t.send }}</button>
+                                <button onClick="{{ m.fb.onSkip }}" style="background:none;border:none;padding:0;font-size:13px;color:#55595E;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#16181A">{{ t.skip }}</button>
+                              </div>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ m.isError }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid #D9C9C4;background:#FCF6F4;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:#8C3A24;padding-top:2px">!</div>
+                    <div style="flex:1">
+                      <div style="font-size:14.5px;font-weight:500;color:#7A3520">{{ t.errTitle }}</div>
+                      <div style="font-size:13.5px;color:#6B4A3E;margin-top:3px;text-wrap:pretty">{{ t.errHelp }}</div>
+                      <button onClick="{{ m.onRetry }}" style="margin-top:12px;background:#16181A;color:#FFF;border:none;padding:7px 13px;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#2E7D5B">{{ t.retry }}</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ generating }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="{{ pulseStyle }}"></div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#55595E;letter-spacing:0.02em">{{ generatingLabel }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="flex:none;border-top:1px solid #E4E4E1;background:#FBFBFA;padding:14px 20px 52px">
+          <div style="max-width:720px;margin:0 auto">
+            <sc-if value="{{ quotaSpent }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px solid #DCDCD8;background:#F1F1EE;padding:9px 12px;margin-bottom:10px;font-size:13px;color:#16181A;text-wrap:pretty">{{ quotaLimitMessage }}</div>
+            </sc-if>
+            <div style="display:flex;gap:0;border:1px solid #D8D8D4;background:#FFFFFF;align-items:stretch">
+              <input type="text" value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}" placeholder="{{ t.phAsk }}" style="flex:1;border:none;outline:none;padding:12px 14px;font-size:14.5px;color:#16181A;min-width:0" />
+              <button onClick="{{ onSend }}" style="{{ sendStyle }}">{{ t.askBtn }}</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;background:#FDFAEC;border-left:3px solid #C9A227;padding:8px 11px;font-size:12.5px;color:#4A4127;margin-top:10px;line-height:1.5">
+              <span>{{ t.permNotice }}</span>
+              <a href="#" onClick="{{ onAbout }}" style="color:#6B5312;font-weight:500;text-decoration:underline;text-underline-offset:3px;font-size:12.5px">{{ t.sourcesLink }}</a>
+            </div>
+            </div>
+        </div>
+      </div>
+      </sc-if>
+
+      </div>
+    </div>
+    <div style="flex:none;border-top:1px solid #E4E4E1;background:#F7F7F4;padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:#8A8F95;letter-spacing:0.01em">
+    <span>Made with</span>
+    <span style="font-size:11px;color:#16181A">🖤</span>
+    <span>by</span>
+    <a href="https://rs-studio.dev" style="color:#55595E;font-weight:500;text-decoration:none" style-hover="color:#16181A;text-decoration:underline">rs-studio.dev</a>
+  </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isOps }}" hint-placeholder-val="{{ false }}">
+    <div style="height:100vh;display:flex;flex-direction:column;overflow:hidden;background:#FBFBFA">
+
+      <div style="flex:none;height:48px;border-bottom:1px solid #E4E4E1;background:#F7F7F4;display:flex;align-items:center;gap:18px;padding:0 18px">
+        <div style="display:flex;align-items:center;gap:9px;flex:none">
+          <div style="display:flex;gap:3px">
+            <div style="width:8px;height:8px;background:#2E7D5B"></div>
+            <div style="width:8px;height:8px;background:#6B5BA6"></div>
+          </div>
+          <div style="font-size:14px;font-weight:600;letter-spacing:-0.01em">NOM Helper</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95;border-left:1px solid #DCDCD8;padding-left:9px;margin-left:2px">{{ t.operation }}</div>
+        </div>
+        <div style="display:flex;gap:2px">
+          <sc-for list="{{ opsTabs }}" as="t" hint-placeholder-count="2">
+            <button onClick="{{ t.onPick }}" style="{{ t.style }}">
+              {{ t.label }}
+              <span style="{{ t.countStyle }}">{{ t.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <button onClick="{{ onExitOps }}" style="margin-left:auto;background:none;border:1px solid #E0E0DC;padding:5px 10px;font-size:12.5px;color:#55595E;cursor:pointer;white-space:nowrap" style-hover="border-color:#B9BCB8;color:#16181A">{{ t.backToQuery }}</button>
+      </div>
+
+      <div style="flex:1;min-height:0;overflow-y:auto">
+
+        <sc-if value="{{ opsIsQueue }}" hint-placeholder-val="{{ true }}">
+          <div style="max-width:1180px;margin:0 auto;padding:20px 18px 96px">
+            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+              <div style="font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ t.reviewQueue }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95">{{ queueCountLabel }}</div>
+            </div>
+            <div style="font-size:13px;color:#55595E;margin-top:4px">{{ t.queueSub }}</div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;padding-bottom:12px;border-bottom:1px solid #E4E4E1">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ t.status }}</div>
+                <div style="display:flex;gap:1px">
+                  <sc-for list="{{ statusFilters }}" as="s" hint-placeholder-count="3">
+                    <button onClick="{{ s.onPick }}" style="{{ s.style }}">{{ s.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ t.reasonFilterLabel }}</div>
+                <div style="display:flex;gap:1px;flex-wrap:wrap">
+                  <sc-for list="{{ reasonFilters }}" as="r" hint-placeholder-count="4">
+                    <button onClick="{{ r.onPick }}" style="{{ r.style }}">{{ r.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <sc-if value="{{ queueHasRows }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:14px;overflow-x:auto">
+              <div style="border:1px solid #E4E4E1;background:#FFFFFF;min-width:760px">
+                <div style="display:grid;grid-template-columns:{{ queueCols }};gap:12px;padding:8px 14px;border-bottom:1px solid #E4E4E1;background:#F7F7F4">
+                  <sc-for list="{{ queueHeaders }}" as="h" hint-placeholder-count="5">
+                    <div style="{{ h.style }}">{{ h.label }}</div>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ queueRows }}" as="q" hint-placeholder-count="3">
+                  <button onClick="{{ q.onOpen }}" style="{{ q.rowStyle }}" style-hover="background:#F7F7F4">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#6B5BA6">{{ q.id }}</span>
+                    <span style="font-size:13px;color:#16181A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ q.query }}</span>
+                    <span style="font-size:12.5px;color:#55595E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ q.reason }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95;white-space:nowrap">{{ q.when }}</span>
+                    <span style="display:flex;align-items:center;gap:7px;white-space:nowrap">
+                      <span style="{{ q.markStyle }}"></span>
+                      <span style="{{ q.statusStyle }}">{{ q.status }}</span>
+                    </span>
+                  </button>
+                </sc-for>
+              </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ queueEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px dashed #DCDCD8;padding:22px;margin-top:14px">
+                <div style="font-size:14px;color:#16181A">{{ queueEmptyTitle }}</div>
+                <div style="font-size:13px;color:#55595E;margin-top:5px;text-wrap:pretty">{{ queueEmptyHelp }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ opsIsDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:1180px;margin:0 auto;padding:16px 18px 96px">
+            <button onClick="{{ onBackToQueue }}" style="background:none;border:none;padding:0;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#55595E;cursor:pointer" style-hover="color:#16181A">← {{ t.reviewQueue }}</button>
+
+            <div style="border:1px solid #E4E4E1;background:#FFFFFF;margin-top:12px">
+              <div style="display:flex;align-items:center;gap:12px;padding:9px 16px;border-bottom:1px solid #EDEDEA;background:#F7F7F4;flex-wrap:wrap">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#6B5BA6">{{ dt.id }}</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8A8F95">{{ dt.when }}</div>
+                <div style="display:flex;align-items:center;gap:7px;margin-left:auto">
+                  <span style="{{ dt.markStyle }}"></span>
+                  <span style="{{ dt.statusStyle }}">{{ dt.status }}</span>
+                </div>
+              </div>
+              <div style="padding:16px">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;margin-bottom:6px">{{ t.queryLabel }}</div>
+                <div style="font-size:16px;line-height:1.45;font-weight:500;border-left:2px solid #16181A;padding-left:12px;text-wrap:pretty">{{ dt.query }}</div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:{{ dtCols }};gap:1px;background:#E4E4E1;border:1px solid #E4E4E1;border-top:none">
+              <div style="background:#FFFFFF;padding:16px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ t.systemAnswer }}</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
+                    <sc-for list="{{ dt.confidenceBars }}" as="b" hint-placeholder-count="3">
+                      <div style="{{ b.style }}"></div>
+                    </sc-for>
+                    <div style="font-size:12px;font-weight:600">{{ dt.confidenceLabel }}</div>
+                  </div>
+                </div>
+                <div style="font-size:14px;line-height:1.55;color:#16181A;text-wrap:pretty">{{ dt.summary }}</div>
+              </div>
+
+              <div style="background:#FFFFFF;padding:16px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ t.retrievedCites }}</div>
+                  <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA">{{ dt.citeCount }}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px">
+                  <sc-for list="{{ dt.citations }}" as="c" hint-placeholder-count="3">
+                    <div style="display:flex;gap:10px;align-items:baseline">
+                      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6B5BA6;flex:none">{{ c.mark }}</span>
+                      <span style="min-width:0">
+                        <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#16181A">{{ c.ref }}</span>
+                        <span style="display:block;font-size:12.5px;color:#55595E;margin-top:2px;text-wrap:pretty">{{ c.title }}</span>
+                      </span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="border:1px solid #E4E4E1;border-top:none;background:#FFFFFF;padding:16px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;margin-bottom:10px">{{ t.userReport }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:14px 36px;align-items:flex-start">
+                <div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ t.flaggedReason }}</div>
+                  <div style="font-size:13.5px;color:#16181A;margin-top:3px">{{ dt.reason }}</div>
+                </div>
+                <div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ t.identity }}</div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-top:3px">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#16181A">{{ dt.identity }}</div>
+                    <button onClick="{{ dt.onReveal }}" style="{{ dt.revealStyle }}">{{ dt.revealLabel }}</button>
+                  </div>
+                </div>
+              </div>
+              <sc-if value="{{ dt.hasComment }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:14px">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;margin-bottom:5px">{{ t.comment }}</div>
+                  <div style="background:#F7F7F4;border-left:2px solid #6B5BA6;padding:10px 12px;font-size:13px;color:#2A2D30;text-wrap:pretty">{{ dt.comment }}</div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="display:grid;grid-template-columns:{{ dtCols }};gap:1px;background:#E4E4E1;border:1px solid #E4E4E1;border-top:none">
+              <div style="background:#FFFFFF;padding:16px">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;margin-bottom:8px">{{ t.cause }}</div>
+                <div style="display:flex;flex-direction:column;border-top:1px solid #EDEDEA">
+                  <sc-for list="{{ dt.causes }}" as="c" hint-placeholder-count="5">
+                    <button onClick="{{ c.onPick }}" style="{{ c.style }}">
+                      <span style="{{ c.mark }}"></span>
+                      <span style="flex:1;text-wrap:pretty">{{ c.label }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="background:#FFFFFF;padding:16px;display:flex;flex-direction:column">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;margin-bottom:8px">{{ t.destination }}</div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <button onClick="{{ dt.onEval }}" style="{{ dt.evalStyle }}">{{ t.addToEval }}</button>
+                  <button onClick="{{ dt.onReviewed }}" style="{{ dt.secondaryStyle }}">{{ t.markReviewed }}</button>
+                  <button onClick="{{ dt.onDiscard }}" style="{{ dt.secondaryStyle }}">{{ t.discard }}</button>
+                </div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA;margin-top:12px;text-wrap:pretty">{{ dt.destinoNote }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ opsIsUsage }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:1180px;margin:0 auto;padding:20px 18px 96px">
+            <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
+              <div style="font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ t.consumption }}</div>
+              <div style="display:flex;gap:1px;margin-left:auto">
+                <sc-for list="{{ periods }}" as="p" hint-placeholder-count="3">
+                  <button onClick="{{ p.onPick }}" style="{{ p.style }}">{{ p.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:{{ kpiCols }};gap:1px;background:#E4E4E1;border:1px solid #E4E4E1;margin-top:14px">
+              <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="3">
+                <div style="background:#FFFFFF;padding:14px 16px">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA">{{ k.label }}</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:23px;color:#16181A;margin-top:6px;letter-spacing:-0.01em">{{ k.value }}</div>
+                  <div style="font-size:12px;color:#8A8F95;margin-top:4px">{{ k.note }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;align-items:baseline;gap:12px;margin:26px 0 8px;flex-wrap:wrap">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.09em;text-transform:uppercase;color:#8A8F95">{{ t.consumptionByUser }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA">{{ thresholdLabel }}</div>
+            </div>
+
+            <div style="overflow-x:auto">
+            <div style="border:1px solid #E4E4E1;background:#FFFFFF;min-width:720px">
+              <div style="display:grid;grid-template-columns:{{ usageCols }};gap:12px;padding:8px 14px;border-bottom:1px solid #E4E4E1;background:#F7F7F4">
+                <sc-for list="{{ usageHeaders }}" as="h" hint-placeholder-count="5">
+                  <div style="{{ h.style }}">{{ h.label }}</div>
+                </sc-for>
+              </div>
+              <sc-for list="{{ usageRows }}" as="u" hint-placeholder-count="4">
+                <div style="{{ u.rowStyle }}">
+                  <span style="display:flex;align-items:center;gap:9px;min-width:0">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#16181A">{{ u.identity }}</span>
+                    <button onClick="{{ u.onReveal }}" style="{{ u.revealStyle }}">{{ u.revealLabel }}</button>
+                  </span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right">{{ u.consultas }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;color:#55595E">{{ u.tokens }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right">{{ u.costo }}</span>
+                  <span style="display:flex;align-items:center;gap:7px;justify-content:flex-end;white-space:nowrap">
+                    <span style="{{ u.markStyle }}"></span>
+                    <span style="{{ u.stateStyle }}">{{ u.state }}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#A2A6AA;margin-top:9px;text-wrap:pretty">{{ usageFootnote }}</div>
+          </div>
+        </sc-if>
+
+      </div>
+
+      <div style="flex:none;border-top:1px solid #E4E4E1;background:#F7F7F4;padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:#8A8F95;letter-spacing:0.01em">
+        <span>Made with</span>
+        <span style="font-size:11px;color:#16181A">🖤</span>
+        <span>by</span>
+        <a href="https://rs-studio.dev" style="color:#55595E;font-weight:500;text-decoration:none" style-hover="color:#16181A;text-decoration:underline">rs-studio.dev</a>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="{{ navStyle }}">
+    <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="3">
+      <button onClick="{{ n.onPick }}" style="{{ n.style }}">{{ n.label }}</button>
+    </sc-for>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;register&quot;,&quot;chat&quot;],&quot;default&quot;:&quot;login&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototipo&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;es&quot;,&quot;en&quot;],&quot;default&quot;:&quot;es&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototipo&quot;},&quot;startPopulated&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototipo&quot;}}">
+const SESSION_NORM = "NOM-001-SEDE-2018";
+const SESSION_DATE = "29 nov 2018";
+
+const SOURCES = [
+  {
+    clave: "NOM-001-SEDE-2018",
+    nombre: "Instalaciones eléctricas (utilización)",
+    version: "2018",
+    publicacion: "29 nov 2018 · DOF",
+    estado: "vigente",
+    incorporada: "12 mar 2026",
+    nota: ""
+  },
+  {
+    clave: "NOM-001-SEDE-2012",
+    nombre: "Instalaciones eléctricas (utilización)",
+    version: "2012",
+    publicacion: "27 nov 2012 · DOF",
+    estado: "sustituida",
+    incorporada: "12 mar 2026",
+    nota: "Se conserva como referencia histórica: sirve para consultar instalaciones proyectadas o verificadas bajo esa edición. No se cita en respuestas salvo que la consulta la pida de forma explícita."
+  }
+];
+
+const QUOTA_TOTAL = 10;
+const QUEUE_COLS = "78px minmax(220px,1fr) 200px 78px 116px";
+const USAGE_COLS = "minmax(190px,1fr) 90px 110px 110px 118px";
+
+const CAUSES = [{ id:"recuperacion" }, { id:"uso" }, { id:"corpus" }, { id:"atribucion" }, { id:"nada" }];
+
+const QUEUE = [
+  { id:"RV-0004", query:"¿Qué protección requiere un circuito de alumbrado en local comercial de 480 V?",
+    reason:"cita", comment:"", when:"hace 6 d", user:"U-1042", real:"Ing. R. Martínez · rmartinez@iepsa.mx",
+    status:"pendiente", confidence:2, confidenceLabel:"Media",
+    summary:"El circuito de alumbrado requiere protección contra sobrecorriente dimensionada por la carga continua al 125 %, con interruptor de 20 A para conductor 12 AWG.",
+    citations:[
+      { mark:"[1]", ref:"Cap. 2 · Art. 210-20(a)", title:"Protección de circuitos derivados con carga continua" },
+      { mark:"[2]", ref:"Cap. 3 · Tabla 310-15(b)(16)", title:"Ampacidad de conductores aislados" }
+    ] },
+  { id:"RV-0006", query:"¿Cuál es el factor de demanda para vivienda unifamiliar de 180 m²?",
+    reason:"falta", comment:"Contestó solo la parte de alumbrado; no dijo nada de cargas de aparatos ni del cálculo por el método estándar.",
+    when:"hace 2 d", user:"U-1108", real:"Arq. L. Fuentes · lfuentes@iepsa.mx",
+    status:"pendiente", confidence:3, confidenceLabel:"Alta",
+    summary:"Para vivienda unifamiliar se aplican 3 000 VA por los primeros 3 000 VA al 100 % y el resto al 35 % según la tabla de factores de demanda para alumbrado general.",
+    citations:[
+      { mark:"[1]", ref:"Cap. 2 · Tabla 220-42", title:"Factores de demanda para alumbrado general" },
+      { mark:"[2]", ref:"Cap. 2 · Art. 220-12", title:"Carga de alumbrado general por tipo de ocupación" }
+    ] },
+  { id:"RV-0002", query:"¿Puedo usar canalización de PVC en área clasificada Clase I División 2?",
+    reason:"interp", comment:"", when:"hace 11 d", user:"U-1042", real:"Ing. R. Martínez · rmartinez@iepsa.mx",
+    status:"revisada", cause:"uso", confidence:2, confidenceLabel:"Media",
+    summary:"Se permite canalización no metálica en Clase I División 2 cuando queda enterrada bajo 600 mm de relleno y los últimos 600 mm de la corrida son metálicos.",
+    citations:[
+      { mark:"[1]", ref:"Cap. 5 · Art. 501-10(b)(1)", title:"Métodos de alambrado en Clase I División 2" }
+    ] },
+  { id:"RV-0001", query:"¿Cada cuánto se debe hacer mantenimiento a un tablero?",
+    reason:"corpus", comment:"", when:"hace 14 d", user:"U-1108", real:"Arq. L. Fuentes · lfuentes@iepsa.mx",
+    status:"descartada", cause:"nada", confidence:1, confidenceLabel:"Baja",
+    summary:"La norma no fija periodicidad de mantenimiento; regula condiciones de instalación y espacios de trabajo.",
+    citations:[
+      { mark:"[1]", ref:"Cap. 1 · Art. 110-26", title:"Espacios de trabajo alrededor de equipo eléctrico" }
+    ] }
+];
+
+const USAGE = {
+  "7":  { consultas:"31",  tokens:"0.42 M", costo:"$310", rango:"últimos 7 días",
+          rows:[["U-1042",18,"0.24 M","$178"],["U-1108",9,"0.12 M","$92"],["U-1203",4,"0.06 M","$40"]] },
+  "30": { consultas:"148", tokens:"2.41 M", costo:"$1,780", rango:"últimos 30 días",
+          rows:[["U-1042",71,"1.14 M","$842"],["U-1108",38,"0.63 M","$465"],["U-1203",22,"0.36 M","$266"],["U-1311",12,"0.19 M","$140"],["U-1402",5,"0.09 M","$67"]] },
+  "90": { consultas:"296", tokens:"4.88 M", costo:"$3,604", rango:"últimos 90 días",
+          rows:[["U-1042",134,"2.21 M","$1,632"],["U-1108",77,"1.27 M","$938"],["U-1203",44,"0.72 M","$532"],["U-1311",28,"0.46 M","$340"],["U-1402",13,"0.22 M","$162"]] }
+};
+const THRESHOLD = { "7": 15, "30": 60, "90": 150 };
+const REAL_NAMES = { "U-1042":"Ing. R. Martínez", "U-1108":"Arq. L. Fuentes", "U-1203":"Ing. D. Salas", "U-1311":"Ing. M. Peña", "U-1402":"C. Ordóñez" };
+
+const REASONS = [
+  { id:"cita",  label:"La cita no corresponde a lo que dice la respuesta", short:"cita no corresponde" },
+  { id:"off",   label:"La respuesta no contesta lo que pregunté", short:"no contesta la pregunta" },
+  { id:"falta", label:"Falta información relevante de la norma", short:"falta información" },
+  { id:"interp",label:"La interpretación es incorrecta", short:"interpretación incorrecta" },
+  { id:"ref",   label:"La referencia (capítulo, artículo o página) está mal", short:"referencia incorrecta" },
+  { id:"otro",  label:"Otro", short:"otro" }
+];
+
+const CITES = [
+  { mark:"[1]", ref:"Cap. 2 · Art. 210-19(a)(1)", title:"Ampacidad mínima de conductores en circuitos derivados",
+    quote:"Los conductores de circuitos derivados deben tener una ampacidad no menor que la carga máxima a servir, y en ningún caso menor que la capacidad nominal del dispositivo de protección contra sobrecorriente del circuito.",
+    page:"p. 148 · NOM-001-SEDE-2018" },
+  { mark:"[2]", ref:"Cap. 3 · Tabla 310-15(b)(16)", title:"Ampacidad de conductores aislados, no más de tres portadores",
+    quote:"Cobre, aislamiento 60 °C (TW, UF): calibre 10 AWG — 30 A. Con aislamiento de 75 °C (THW, THHW, XHHW): 35 A. El valor aplicable queda limitado por la temperatura del terminal del equipo.",
+    page:"p. 214 · NOM-001-SEDE-2018" },
+  { mark:"[3]", ref:"Cap. 2 · Art. 240-4(D)(7)", title:"Protección contra sobrecorriente de conductores pequeños",
+    quote:"Para conductor de cobre calibre 10 AWG, la protección contra sobrecorriente no debe exceder de 30 A, salvo lo permitido en 240-4(E) a 240-4(G).",
+    page:"p. 172 · NOM-001-SEDE-2018" }
+];
+
+const ANSWERS = {
+  calibre: {
+    kind:"answer",
+    summary:"Usa conductor de cobre calibre 10 AWG. Es el mínimo que soporta 30 A y el máximo que admite protección de 30 A sin excepciones.",
+    paragraphs:[
+      "El calibre se determina por la ampacidad requerida: el conductor no puede tener una capacidad menor que la del dispositivo de protección del circuito derivado. Para 30 A, el cobre 10 AWG con aislamiento de 60 °C entrega exactamente 30 A según la tabla de ampacidades.",
+      "Si el circuito lleva más de tres conductores portadores en la misma canalización, o la temperatura ambiente supera los 30 °C, aplica los factores de ajuste y corrección antes de cerrar el calibre: con seis conductores portadores el 10 AWG cae a 24 A y ya no cumple, y debes subir a 8 AWG.",
+      "La temperatura del terminal del equipo también limita: aunque el aislamiento sea de 90 °C, si el interruptor está marcado para 60 °C, el cálculo se hace en la columna de 60 °C."
+    ],
+    citations: CITES,
+    confidence: 3,
+    confidenceLabel:"Alta",
+    confidenceNote:"3 de 3 citas concuerdan"
+  },
+  tierra: {
+    kind:"answer",
+    summary:"El electrodo de puesta a tierra en vivienda debe conectarse con conductor de cobre no menor a 8 AWG, y todo el sistema debe quedar unido a un solo punto de tierra.",
+    paragraphs:[
+      "La norma exige un sistema de electrodos único: varilla, tubería metálica de agua enterrada y acero estructural, cuando existan, deben unirse entre sí. El conductor del electrodo se dimensiona por el calibre del conductor de acometida.",
+      "En instalación residencial típica con acometida de 2/0 AWG cobre, el conductor del electrodo resulta 4 AWG cobre."
+    ],
+    citations:[
+      { mark:"[1]", ref:"Cap. 2 · Art. 250-50", title:"Sistema de electrodos de puesta a tierra",
+        quote:"Todos los electrodos descritos en 250-52(A)(1) a (A)(7) que estén presentes en cada edificio o estructura servida deben unirse entre sí para formar el sistema de electrodos de puesta a tierra.",
+        page:"p. 186 · NOM-001-SEDE-2018" },
+      { mark:"[2]", ref:"Cap. 2 · Tabla 250-66", title:"Conductor del electrodo de puesta a tierra",
+        quote:"Conductor de acometida 2/0 o 1/0 AWG cobre: conductor del electrodo de puesta a tierra 4 AWG cobre.",
+        page:"p. 191 · NOM-001-SEDE-2018" }
+    ],
+    confidence: 2,
+    confidenceLabel:"Media",
+    confidenceNote:"2 citas · depende de la acometida"
+  },
+  insuficiente: {
+    kind:"insufficient",
+    summary:"La norma no fija una distancia entre tablero y muro en esos términos.",
+    detail:"Lo que sí regula es el espacio de trabajo frente al equipo eléctrico: profundidad libre, ancho y altura del espacio de acceso, medidos desde las partes vivas. No encontré ningún artículo que establezca una separación posterior o lateral del tablero respecto al muro para instalaciones de menos de 600 V.",
+    suggestions:[
+      "¿Qué espacio de trabajo se requiere frente a un tablero de 240 V?",
+      "¿Cuál es la altura mínima del espacio de acceso a un tablero?"
+    ]
+  }
+};
+
+const EXAMPLES = [
+  "¿Qué calibre de conductor debo usar para un circuito derivado de 30 A?",
+  "Requisitos de puesta a tierra en instalación residencial",
+  "Distancia mínima entre tablero y muro",
+  "Protección requerida en circuitos de alumbrado comercial",
+  "Cálculo de factor de demanda para vivienda unifamiliar"
+];
+
+const HISTORY_SEED = [
+  "Calibre para circuito derivado de 30 A",
+  "Puesta a tierra en instalación residencial",
+  "Alumbrado comercial — protección",
+  "Factor de demanda, vivienda unifamiliar",
+  "Canalización en área clasificada"
+];
+
+
+const L = {
+  es: {
+    settingsTitle:"Configuración de la cuenta", secAccount:"Cuenta", secUsage:"Uso", secData:"Datos",
+    fieldName:"Nombre", fieldEmail:"Correo electrónico", fieldEmailShort:"Correo", fieldPassword:"Contraseña", fieldLanguage:"Idioma",
+    save:"Guardar", confirm:"Confirmar", cancel:"Cancelar", saved:"Guardado",
+    changePassword:"Cambiar contraseña", savePassword:"Guardar contraseña",
+    phCurrentPw:"Contraseña actual", phNewPw:"Contraseña nueva", phConfirmPw:"Confirmar contraseña nueva",
+    delHistTitle:"Eliminar historial de consultas", delHistDesc:"Borra tus conversaciones. La cuenta se conserva.", delHistBtn:"Eliminar historial",
+    delHistConfirm:"Se eliminarán todas tus conversaciones y sus citas guardadas. Tu cuenta y tu acceso no se ven afectados.",
+    delHistConfirmBtn:"Confirmar eliminación", delHistDone:"Historial eliminado.",
+    delAcctTitle:"Eliminar cuenta", delAcctDesc:"Borra tu cuenta, tu historial y tu acceso de forma permanente.", delAcctBtn:"Eliminar cuenta",
+    delAcctConfirm:"Esto borra tu cuenta, todas tus conversaciones y tu acceso. No se puede deshacer.",
+    typePre:"Escribe", typePost:"para confirmar.", deleteWord:"ELIMINAR", delAcctFinal:"Eliminar cuenta permanentemente",
+    usageTodaySuffix:" de 10 consultas usadas hoy", usageReset:"El contador se reinicia a las 00:00, hora de Ciudad de México.",
+    tagline:"NOM-001-SEDE · Instalaciones eléctricas", recover:"Recuperar acceso", pwHint:"Mínimo 8 caracteres, 1 número",
+    langFieldHint:"Puedes cambiarlo después en la configuración de la cuenta.",
+    authTitleLogin:"Iniciar sesión", authTitleReg:"Crear cuenta",
+    authSubLogin:"Consulta técnica sobre la NOM-001-SEDE.", authSubReg:"Acceso a la consulta técnica de la NOM-001-SEDE.",
+    authCtaLogin:"Entrar", authCtaReg:"Crear cuenta",
+    authSwitchLoginLabel:"¿No tienes cuenta?", authSwitchLoginCta:"Crea una",
+    authSwitchRegLabel:"¿Ya tienes cuenta?", authSwitchRegCta:"Inicia sesión",
+    newQuery:"Nueva consulta", calculators:"Calculadoras", calculator:"Calculadora",
+    aboutNav:"Acerca y fuentes", operation:"Operación", historyLabel:"Historial",
+    historyEmpty1:"Aquí se guardan tus consultas.", historyEmpty2:"Cada una queda identificada por su tema.", logout:"Salir",
+    aboutTitle:"Acerca del proyecto y las fuentes", backToQuery:"Volver a la consulta",
+    aboutP1:"Herramienta de consulta sobre normatividad eléctrica mexicana. Se pregunta en lenguaje natural y la respuesta se construye a partir del texto de la norma, con la cita al capítulo, artículo y página de donde salió cada afirmación.",
+    aboutP2:"No consulta internet ni fuentes secundarias: solo los documentos normativos incorporados al sistema, listados abajo con su versión y fecha.",
+    secStandards:"Normas incorporadas", secCoverage:"Qué cubre y qué no", coverYes:"Responde bien", coverNo:"Queda fuera",
+    secAnatomy:"Cómo leer una respuesta", confLevels:"Niveles de confianza", secDisclaimer:"Aviso completo",
+    noticeTitle:"Antes de comenzar", noticeL1a:"Esta sesión consulta la", noticeL1b:", vigente desde el",
+    noticeL2:"Las respuestas se construyen a partir del texto de la norma y siempre incluyen la cita correspondiente. Verifica cada cita contra el texto oficial antes de aplicarla.",
+    noticeL3:"No sustituye el criterio de un profesional responsable ni constituye un dictamen técnico.",
+    noticeLink:"Fuentes y alcance completo", collapse:"Contraer", inEffectSince:"vigente desde", seeNotice:"Ver aviso",
+    emptyTitle:"¿Qué necesitas verificar?",
+    emptySub:"Pregunta en lenguaje natural. Cada respuesta viene con la referencia exacta al texto de la norma: capítulo, artículo y página.",
+    examplesLabel:"Consultas de ejemplo",
+    summary:"Resumen", explanation:"Explicación", citations:"Citas de la norma", confidence:"Confianza",
+    seeText:"Ver texto", hide:"Ocultar", reference:" referencia", references:" referencias", cite:" cita", cites:" citas",
+    helpful:"Sirvió", notHelpful:"No sirvió", whatFailed:"Qué falló", optional:"Opcional", send:"Enviar", skip:"Omitir",
+    phWhatFailed:"En una línea, qué falló", recorded:"Registrado", indicateFail:"Indicar qué falló", removeFb:"Quitar",
+    insufficient:"Información insuficiente", rephrase:"Reformula así",
+    errTitle:"No se pudo procesar la consulta",
+    errHelp:"Se perdió la conexión con el índice de la norma. Tu texto no se borró: vuelve a enviarlo.", retry:"Reintentar",
+    phAsk:"Pregunta sobre la NOM-001-SEDE…", askBtn:"Consultar",
+    permNotice:"Las respuestas pueden contener errores. Verifica siempre contra el texto oficial de la norma.", sourcesLink:"Fuentes y alcance",
+    gen1:"Buscando en el texto de la norma…", gen2:"Redactando respuesta y verificando citas…",
+    quotaNone:"Sin consultas disponibles hoy", quotaOne:" consulta disponible hoy", quotaMany:" consultas disponibles hoy",
+    quotaHint0:"Se resetean mañana a las 00:00 CDMX", quotaHintLow:"Te quedan pocas consultas hoy.",
+    quotaLimitA:"Límite diario alcanzado. Tus ", quotaLimitB:" consultas se resetean mañana a las 00:00 CDMX.",
+    conf:{ Alta:"Alta", Media:"Media", Baja:"Baja" },
+    when:{ "hace 2 d":"hace 2 d", "hace 6 d":"hace 6 d", "hace 11 d":"hace 11 d", "hace 14 d":"hace 14 d" },
+    notes:{ "3 de 3 citas concuerdan":"3 de 3 citas concuerdan", "2 citas · depende de la acometida":"2 citas · depende de la acometida" },
+    estVigente:"Vigente", estTransicion:"En transición", estSustituida:"Sustituida",
+    fVersion:"Versión", fPublication:"Publicación oficial", fLoaded:"Incorporada al sistema",
+    sourcesFootA:" documentos incorporados · última actualización del índice: ",
+    reviewQueue:"Cola de revisión", queueSub:"Respuestas calificadas negativamente, de la más antigua a la más reciente.",
+    status:"Estado", reasonFilterLabel:"Motivo",
+    stPending:"Pendiente", stReviewed:"Revisada", stDiscarded:"Descartada",
+    fPending:"Pendientes", fReviewed:"Revisadas", fDiscarded:"Descartadas", fAll:"Todas", fAllReasons:"Todos",
+    pendingOne:" pendiente", pendingMany:" pendientes", totalSuffix:" en total",
+    hId:"ID", hQuery:"Consulta", hReason:"Motivo", hWhen:"Cuándo", hStatus:"Estado",
+    queueEmptyT1:"Sin elementos pendientes.", queueEmptyT2:"Ningún elemento con estos filtros.",
+    queueEmptyH1:"Las respuestas calificadas negativamente entran aquí. Es el estado normal la mayor parte del tiempo.",
+    queueEmptyH2:"Cambia el estado o el motivo para ver otros elementos.",
+    tabReview:"Revisión", tabUsage:"Consumo",
+    queryLabel:"Consulta", systemAnswer:"Respuesta del sistema", retrievedCites:"Citas recuperadas",
+    userReport:"Reporte del usuario", flaggedReason:"Motivo marcado", identity:"Identidad", comment:"Comentario",
+    cause:"Causa", destination:"Destino", addToEval:"Agregar al conjunto de evaluación",
+    markReviewed:"Marcar como revisada", discard:"Descartar",
+    destInEval:"En el conjunto de evaluación. Sigue consultable desde la cola.",
+    destReady:"Clasifica la causa antes de agregarla al conjunto de evaluación.",
+    destNeedCause:"Selecciona una causa para habilitar el envío al conjunto de evaluación.",
+    revealIdentity:"Revelar identidad", hideIdentity:"Ocultar identidad", reveal:"Revelar",
+    causes:{ recuperacion:"El texto recuperado no era el pertinente", uso:"El texto era correcto pero la respuesta lo usó mal",
+      corpus:"La información no está en el corpus cargado", atribucion:"La referencia quedó mal atribuida", nada:"Sin problema real — la queja no procede" },
+    consumption:"Consumo", consumptionByUser:"Consumo por usuario", days:" días",
+    kpiQueries:"Consultas", kpiTokens:"Tokens procesados", kpiCost:"Costo estimado",
+    kpiTokensNote:"entrada + salida", kpiCostNote:"tarifa vigente del proveedor",
+    ranges:{ "últimos 7 días":"últimos 7 días", "últimos 30 días":"últimos 30 días", "últimos 90 días":"últimos 90 días" },
+    thresholdA:"Umbral: ", thresholdB:" consultas por usuario en el periodo",
+    uUser:"Usuario", uQueries:"Consultas", uTokens:"Tokens", uCost:"Costo", uState:"Estado", over:"Excede", normal:"Normal",
+    footNone:"Ningún usuario excede el umbral en este periodo. Identidades seudonimizadas: revelar es una acción por fila.",
+    footOne:" usuario excede", footMany:" usuarios exceden",
+    footTail:" el umbral. Identidades seudonimizadas: revelar es una acción por fila.",
+    nav:{ login:"Acceso", register:"Registro", chat:"Chat", demo:"Con respuesta", fail:"Error", limit:"Sin cupo", about:"Acerca", ops:"Operación" },
+    errEmailTaken:{ title:"Ese correo ya tiene cuenta", help:"Inicia sesión con él o usa otro correo para registrarte." },
+    errPwReq:{ title:"La contraseña no cumple los requisitos", help:"Necesita al menos 8 caracteres e incluir un número." },
+    errMissing:{ title:"Faltan datos para crear la cuenta", help:"Completa nombre y correo antes de continuar." },
+    errCreds:{ title:"Faltan credenciales", help:"Escribe tu correo y contraseña para entrar." },
+    errBadCreds:{ title:"Correo o contraseña incorrectos", help:"Revisa la contraseña; si no la recuerdas, usa Recuperar acceso. En esta demo la contraseña es nom2012." },
+    errEmailInUse:"Ese correo ya está en uso por otra cuenta.",
+    errPwCurrent:"La contraseña actual no es correcta.",
+    errPwNew:"La contraseña nueva necesita al menos 8 caracteres e incluir un número.",
+    errPwMatch:"Las contraseñas nuevas no coinciden."
+  },
+  en: {
+    settingsTitle:"Account settings", secAccount:"Account", secUsage:"Usage", secData:"Data",
+    fieldName:"Name", fieldEmail:"Email address", fieldEmailShort:"Email", fieldPassword:"Password", fieldLanguage:"Language",
+    save:"Save", confirm:"Confirm", cancel:"Cancel", saved:"Saved",
+    changePassword:"Change password", savePassword:"Save password",
+    phCurrentPw:"Current password", phNewPw:"New password", phConfirmPw:"Confirm new password",
+    delHistTitle:"Delete query history", delHistDesc:"Deletes your conversations. The account is kept.", delHistBtn:"Delete history",
+    delHistConfirm:"All your conversations and their saved citations will be deleted. Your account and access are unaffected.",
+    delHistConfirmBtn:"Confirm deletion", delHistDone:"History deleted.",
+    delAcctTitle:"Delete account", delAcctDesc:"Permanently deletes your account, your history and your access.", delAcctBtn:"Delete account",
+    delAcctConfirm:"This deletes your account, all your conversations and your access. It cannot be undone.",
+    typePre:"Type", typePost:"to confirm.", deleteWord:"DELETE", delAcctFinal:"Delete account permanently",
+    usageTodaySuffix:" of 10 queries used today", usageReset:"The counter resets at 00:00, Mexico City time.",
+    tagline:"NOM-001-SEDE · Electrical installations", recover:"Recover access", pwHint:"Minimum 8 characters, 1 number",
+    langFieldHint:"You can change it later in account settings.",
+    authTitleLogin:"Sign in", authTitleReg:"Create account",
+    authSubLogin:"Technical queries on NOM-001-SEDE.", authSubReg:"Access to technical queries on NOM-001-SEDE.",
+    authCtaLogin:"Sign in", authCtaReg:"Create account",
+    authSwitchLoginLabel:"No account yet?", authSwitchLoginCta:"Create one",
+    authSwitchRegLabel:"Already have an account?", authSwitchRegCta:"Sign in",
+    newQuery:"New query", calculators:"Calculators", calculator:"Calculator",
+    aboutNav:"About and sources", operation:"Operations", historyLabel:"History",
+    historyEmpty1:"Your queries are saved here.", historyEmpty2:"Each one is identified by its topic.", logout:"Sign out",
+    aboutTitle:"About the project and its sources", backToQuery:"Back to queries",
+    aboutP1:"A tool for querying Mexican electrical regulations. You ask in plain language and the answer is built from the text of the standard, citing the chapter, article and page each statement came from.",
+    aboutP2:"It does not search the internet or secondary sources: only the normative documents loaded into the system, listed below with their version and date.",
+    secStandards:"Standards loaded", secCoverage:"What it covers and what it doesn't", coverYes:"Answers well", coverNo:"Out of scope",
+    secAnatomy:"How to read an answer", confLevels:"Confidence levels", secDisclaimer:"Full notice",
+    noticeTitle:"Before you begin", noticeL1a:"This session queries the", noticeL1b:", in effect since",
+    noticeL2:"Responses are built from the text of the standard and always include the corresponding citation. Verify every reference against the official published document before applying it.",
+    noticeL3:"This tool does not substitute the judgment of a responsible professional and does not constitute a technical ruling.",
+    noticeLink:"Full sources and scope", collapse:"Collapse", inEffectSince:"in effect since", seeNotice:"See notice",
+    emptyTitle:"What do you need to verify?",
+    emptySub:"Ask in plain language. Every answer comes with the exact reference to the text of the standard: chapter, article and page.",
+    examplesLabel:"Example queries",
+    summary:"Summary", explanation:"Explanation", citations:"Citations from the standard", confidence:"Confidence",
+    seeText:"See text", hide:"Hide", reference:" reference", references:" references", cite:" citation", cites:" citations",
+    helpful:"Helpful", notHelpful:"Not helpful", whatFailed:"What went wrong", optional:"Optional", send:"Send", skip:"Skip",
+    phWhatFailed:"In one line, what went wrong", recorded:"Recorded", indicateFail:"Say what went wrong", removeFb:"Remove",
+    insufficient:"Insufficient information", rephrase:"Try rephrasing",
+    errTitle:"The query could not be processed",
+    errHelp:"The connection to the standard's index was lost. Your text was not deleted: send it again.", retry:"Retry",
+    phAsk:"Ask about NOM-001-SEDE…", askBtn:"Ask",
+    permNotice:"Responses may contain errors. Always verify against the official text of the standard.", sourcesLink:"Sources and scope",
+    gen1:"Searching the text of the standard…", gen2:"Drafting the answer and checking citations…",
+    quotaNone:"No queries available today", quotaOne:" query available today", quotaMany:" queries available today",
+    quotaHint0:"They reset tomorrow at 00:00 CDMX", quotaHintLow:"You have few queries left today.",
+    quotaLimitA:"Daily limit reached. Your ", quotaLimitB:" queries reset tomorrow at 00:00 CDMX.",
+    conf:{ Alta:"High", Media:"Medium", Baja:"Low" },
+    when:{ "hace 2 d":"2 d ago", "hace 6 d":"6 d ago", "hace 11 d":"11 d ago", "hace 14 d":"14 d ago" },
+    notes:{ "3 de 3 citas concuerdan":"3 of 3 citations agree", "2 citas · depende de la acometida":"2 citations · depends on the service conductors" },
+    estVigente:"In effect", estTransicion:"In transition", estSustituida:"Superseded",
+    fVersion:"Version", fPublication:"Official publication", fLoaded:"Loaded into the system",
+    sourcesFootA:" documents loaded · index last updated: ",
+    reviewQueue:"Review queue", queueSub:"Negatively rated responses, oldest first.",
+    status:"Status", reasonFilterLabel:"Reason",
+    stPending:"Pending", stReviewed:"Reviewed", stDiscarded:"Discarded",
+    fPending:"Pending", fReviewed:"Reviewed", fDiscarded:"Discarded", fAll:"All", fAllReasons:"All",
+    pendingOne:" pending", pendingMany:" pending", totalSuffix:" total",
+    hId:"ID", hQuery:"Query", hReason:"Reason", hWhen:"When", hStatus:"Status",
+    queueEmptyT1:"No pending items.", queueEmptyT2:"No items match these filters.",
+    queueEmptyH1:"Negatively rated responses land here. An empty queue is the normal state most of the time.",
+    queueEmptyH2:"Change the status or the reason to see other items.",
+    tabReview:"Review", tabUsage:"Usage",
+    queryLabel:"Query", systemAnswer:"System answer", retrievedCites:"Retrieved citations",
+    userReport:"User report", flaggedReason:"Flagged reason", identity:"Identity", comment:"Comment",
+    cause:"Cause", destination:"Destination", addToEval:"Add to the evaluation set",
+    markReviewed:"Mark as reviewed", discard:"Discard",
+    destInEval:"In the evaluation set. Still available from the queue.",
+    destReady:"Classify the cause before adding it to the evaluation set.",
+    destNeedCause:"Select a cause to enable sending it to the evaluation set.",
+    revealIdentity:"Reveal identity", hideIdentity:"Hide identity", reveal:"Reveal",
+    causes:{ recuperacion:"The retrieved text was not the relevant one", uso:"The text was correct but the answer used it wrongly",
+      corpus:"The information is not in the loaded corpus", atribucion:"The reference was misattributed", nada:"No real problem — the complaint does not hold" },
+    consumption:"Usage", consumptionByUser:"Usage by user", days:" days",
+    kpiQueries:"Queries", kpiTokens:"Tokens processed", kpiCost:"Estimated cost",
+    kpiTokensNote:"input + output", kpiCostNote:"provider's current rate",
+    ranges:{ "últimos 7 días":"last 7 days", "últimos 30 días":"last 30 days", "últimos 90 días":"last 90 days" },
+    thresholdA:"Threshold: ", thresholdB:" queries per user in the period",
+    uUser:"User", uQueries:"Queries", uTokens:"Tokens", uCost:"Cost", uState:"Status", over:"Over", normal:"Normal",
+    footNone:"No user is over the threshold in this period. Pseudonymized identities: revealing is a per-row action.",
+    footOne:" user is over", footMany:" users are over",
+    footTail:" the threshold. Pseudonymized identities: revealing is a per-row action.",
+    nav:{ login:"Sign in", register:"Register", chat:"Chat", demo:"With answer", fail:"Error", limit:"No quota", about:"About", ops:"Operations" },
+    errEmailTaken:{ title:"That email already has an account", help:"Sign in with it or use another email to register." },
+    errPwReq:{ title:"The password does not meet the requirements", help:"It needs at least 8 characters and one number." },
+    errMissing:{ title:"Missing details to create the account", help:"Fill in name and email before continuing." },
+    errCreds:{ title:"Missing credentials", help:"Enter your email and password to sign in." },
+    errBadCreds:{ title:"Incorrect email or password", help:"Check the password; if you don't remember it, use Recover access. In this demo the password is nom2012." },
+    errEmailInUse:"That email is already in use by another account.",
+    errPwCurrent:"The current password is not correct.",
+    errPwNew:"The new password needs at least 8 characters and one number.",
+    errPwMatch:"The new passwords do not match.",
+    covers:[
+      "What the standard requires in a specific case: conductor sizes, protection, grounding, raceways, working spaces.",
+      "Locating the applicable article or table and reading its literal text.",
+      "Comparing requirements across sections and understanding what a value depends on.",
+      "Checking whether a criterion you already had is backed by the normative text."
+    ],
+    notCovers:[
+      "Project calculations: design memos, load schedules, full sizing of an installation.",
+      "Rulings, approvals, or any document with validity before a verification unit.",
+      "Verification of existing installations: that requires physical inspection.",
+      "Standards not loaded into the system, local codes, and utility company criteria."
+    ],
+    anatomy:[
+      { num:"01", name:"Summary", text:"The direct answer, in one or two sentences. If you read only one part, read this one." },
+      { num:"02", name:"Explanation", text:"The technical detail: what the value depends on, which factors modify it and when it stops applying." },
+      { num:"03", name:"Citations", text:"Chapter, article and page each statement came from. They open inline so you can read the literal text without leaving the conversation." },
+      { num:"04", name:"Confidence", text:"How well the answer is supported by the retrieved text. It does not measure how correct the installation you are designing is." }
+    ],
+    confidenceLevels:[
+      { n:3, label:"High", text:"Several agreeing citations that answer the query directly. Verify the citations and apply." },
+      { n:2, label:"Medium", text:"The text answers, but the value depends on conditions the query did not specify. Read the full explanation before applying." },
+      { n:1, label:"Low", text:"The support is partial or indirect. Treat it as a starting point: open the citations, verify in the official document and consult a responsible professional." }
+    ],
+    disclaimer:[
+      { title:"What the system does", text:"It retrieves fragments of the loaded normative text and drafts an answer from them. Everything it states must be traceable to a citation; when the support is insufficient, it says so instead of filling the gap." },
+      { title:"What it does not do", text:"It does not issue professional judgment or technical rulings, it does not approve or reject installations, and it does not replace the expert or the person responsible for the work. It also does not consider local codes or utility company requirements." },
+      { title:"Possible errors", text:"Automatic drafting can cite an article that does not apply to the case, omit an exception, or carry a value from the wrong table. That is why every answer carries its reference: always verify against the official published text before applying any result." },
+      { title:"Responsibility", text:"The technical decision and its execution belong to the professional who signs them. Using this tool does not transfer that responsibility." }
+    ]
+  }
+};
+
+class Component extends DCLogic {
+  state = {
+    lang: "es",
+    regLang: "es",
+    screen: "login",
+    email: "", pass: "", name: "",
+    error: null,
+    draft: "",
+    messages: [],
+    history: [],
+    historyActive: -1,
+    generating: false,
+    genStep: 0,
+    reveal: 3,
+    openCites: {},
+    feedback: {},
+    role: "user",
+    opsView: "queue",
+    opsItems: QUEUE,
+    opsOpen: null,
+    opsStatus: "pendiente",
+    opsReason: "todos",
+    opsPeriod: "30",
+    revealed: {},
+    accountName: "Ing. R. Martínez",
+    accountEmail: "rmartinez@iepsa.mx",
+    settingsOpen: false,
+    fieldSaved: {},
+    pwOpen: false,
+    pwCurrent: "", pwNext: "", pwConfirm: "", pwError: "",
+    emailDraft: "", emailError: "",
+    nameDraft: "",
+    delHist: "idle",
+    delAcct: "idle",
+    delAcctVal: "",
+    settingsSaveError: "",
+    sidebarOpen: true,
+    view: "chat",
+    noticeOpen: true,
+    width: 1280,
+    threadTitle: null
+  };
+
+  componentDidMount() {
+    const setW = () => this.setState({ width: window.innerWidth });
+    setW();
+    window.addEventListener("resize", setW);
+    this._setW = setW;
+    if (this.props.lang) this.setState({ lang: this.props.lang, regLang: this.props.lang });
+    if (this.props.screen && this.props.screen !== "login") this.setState({ screen: this.props.screen });
+    if (this.props.startPopulated) this.loadDemo();
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this._setW);
+    (this._timers || []).forEach(clearTimeout);
+  }
+  later(fn, ms) { (this._timers = this._timers || []).push(setTimeout(fn, ms)); }
+
+  t() { return L[this.state.lang] || L.es; }
+  reasonLabel(id) { const r = REASONS.filter(x => x.id === id)[0]; return r ? r.label : "—"; }
+
+  opsPatch(id, patch) {
+    this.setState(s => ({ opsItems: s.opsItems.map(it => it.id === id ? Object.assign({}, it, patch) : it) }));
+  }
+
+  opsRows() {
+    const st = this.state;
+    return (st.opsItems || []).filter(it =>
+      (st.opsStatus === "todas" || it.status === st.opsStatus) &&
+      (st.opsReason === "todos" || it.reason === st.opsReason));
+  }
+
+  statusVisual(status) {
+    if (status === "pendiente") return { mark:"width:7px;height:7px;flex:none;background:#C9A227", color:"#16181A", weight:"500" };
+    if (status === "revisada")  return { mark:"width:7px;height:7px;flex:none;background:#2E7D5B", color:"#55595E", weight:"400" };
+    return { mark:"width:7px;height:7px;flex:none;border:1.5px solid #B6B9BC", color:"#8A8F95", weight:"400" };
+  }
+
+  statusWord(s) { const t = this.t(); return s === "pendiente" ? t.stPending : s === "revisada" ? t.stReviewed : t.stDiscarded; }
+
+  savedTag(key) {
+    return this.state.fieldSaved[key]
+      ? { style: "margin-left:8px;font-size:11.5px;color:#55595E;font-weight:400", text: this.t().saved }
+      : { style: "display:none", text: "" };
+  }
+  markSaved(key) {
+    this.setState(s => ({ fieldSaved: Object.assign({}, s.fieldSaved, { [key]: true }) }));
+    this.later(() => this.setState(s => ({ fieldSaved: Object.assign({}, s.fieldSaved, { [key]: false }) })), 2200);
+  }
+
+  fbFor(i) {
+    const t = this.t();
+    const f = (this.state.feedback || {})[i] || {};
+    const rating = f.rating || null;
+    const open = !!f.open;
+    const set = (patch) => this.setState(s => ({ feedback: Object.assign({}, s.feedback, { [i]: Object.assign({}, (s.feedback || {})[i], patch) }) }));
+    const pill = (on, accent) => "display:flex;align-items:center;gap:8px;background:" + (on ? "#F1F1EE" : "transparent") +
+      ";border:1px solid " + (on ? "#16181A" : "#E4E4E1") + ";padding:5px 11px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.04em;color:" +
+      (on ? "#16181A" : "#8A8F95") + ";cursor:pointer";
+    const mark = (on, accent) => "width:7px;height:7px;flex:none;" + (on ? "background:" + accent : "border:1.5px solid #B6B9BC");
+    const reasonObj = REASONS.filter(r => r.id === f.reason)[0];
+    const sent = !!f.sent && !!reasonObj;
+    const canSend = !!f.reason && (f.reason !== "otro" || (f.other || "").trim().length > 0);
+
+    return {
+      upStyle: pill(rating === "up"), downStyle: pill(rating === "down"),
+      upMark: mark(rating === "up", "#2E7D5B"), downMark: mark(rating === "down", "#16181A"),
+      onUp: () => set({ rating: rating === "up" ? null : "up", open: false }),
+      onDown: () => rating === "down" ? set({ rating: null, open: false }) : set({ rating: "down", open: !f.sent }),
+
+      showStatus: !!rating && !open,
+      statusText: rating === "up" ? t.recorded : (sent ? t.recorded + " · " + (f.reason === "otro" ? (f.other || "").trim() : reasonObj.short) : t.recorded),
+      editLabel: rating === "down" && !sent ? t.indicateFail : t.removeFb,
+      onEdit: () => (rating === "down" && !sent) ? set({ open: true }) : set({ rating: null, reason: null, other: "", sent: false, open: false }),
+
+      showReasons: rating === "down" && open,
+      reasons: REASONS.map((r, ri) => ({
+        label: r.label,
+        style: "display:flex;align-items:baseline;gap:12px;width:100%;text-align:left;background:none;border:none;border-bottom:" +
+          (ri === REASONS.length - 1 ? "none" : "1px solid #EDEDEA") + ";padding:10px 14px;font-size:13.5px;color:" +
+          (f.reason === r.id ? "#16181A" : "#2A2D30") + ";cursor:pointer;font-weight:" + (f.reason === r.id ? "500" : "400"),
+        mark: "width:7px;height:7px;flex:none;transform:translateY(1px);" + (f.reason === r.id ? "background:#16181A" : "border:1.5px solid #C9C9C4"),
+        onPick: () => set({ reason: f.reason === r.id ? null : r.id })
+      })),
+      showOther: f.reason === "otro",
+      otherVal: f.other || "",
+      onOther: e => set({ other: e.target.value }),
+      sendStyle: "border:none;background:" + (canSend ? "#16181A" : "#E4E4E1") + ";color:" + (canSend ? "#FFF" : "#A2A6AA") +
+        ";padding:7px 14px;font-size:13px;font-weight:500;cursor:" + (canSend ? "pointer" : "default"),
+      onSend: () => canSend && set({ sent: true, open: false }),
+      onSkip: () => set({ open: false, reason: null, other: "", sent: false })
+    };
+  }
+
+  key(q) {
+    const s = q.toLowerCase();
+    if (s.includes("simular error")) return "error";
+    if (s.includes("muro") || s.includes("tablero y")) return "insuficiente";
+    if (s.includes("tierra")) return "tierra";
+    return "calibre";
+  }
+  topic(q) {
+    const s = q.toLowerCase();
+    if (s.includes("muro")) return "Distancia tablero – muro";
+    if (s.includes("tierra")) return "Puesta a tierra residencial";
+    if (s.includes("calibre") || s.includes("30 a")) return "Calibre para circuito de 30 A";
+    return q.length > 38 ? q.slice(0, 38) + "…" : q;
+  }
+
+  ask = (q, force) => {
+    if (!q || !q.trim()) return;
+    if (this.state.quota <= 0) return;
+    this.setState(s => ({ quota: Math.max(0, s.quota - 1) }));
+    const text = q.trim();
+    const kind = force || this.key(text);
+    const msgs = this.state.messages.concat([{ kind: "user", text }]);
+    const hist = [this.topic(text)].concat(this.state.history.filter(h => h !== this.topic(text)));
+    this.setState({ messages: msgs, draft: "", generating: true, genStep: 0, reveal: 0, history: hist, historyActive: 0, threadTitle: this.topic(text), openCites: {}, feedback: {}, view: "chat", noticeOpen: false });
+    this.later(() => this.setState({ genStep: 1 }), 700);
+    this.later(() => {
+      const ans = kind === "error" ? { kind: "error", query: text } : Object.assign({}, ANSWERS[kind]);
+      this.setState(s => ({ generating: false, reveal: 1, messages: s.messages.concat([ans]) }));
+      this.later(() => this.setState({ reveal: 2 }), 550);
+      this.later(() => this.setState({ reveal: 3 }), 1100);
+    }, 1600);
+  };
+
+  loadLimit = () => {
+    this.loadDemo();
+    this.setState({ quota: 0, draft: "" });
+  };
+
+  loadError = () => {
+    const q = EXAMPLES[3];
+    this.setState({
+      screen: "chat", view: "chat", noticeOpen: false,
+      messages: [{ kind: "user", text: q }, { kind: "error", query: q }],
+      history: [this.topic(q)].concat(HISTORY_SEED.slice(0, 3)), historyActive: 0, reveal: 3, threadTitle: this.topic(q)
+    });
+  };
+
+  loadDemo = () => {
+    this.setState({
+      screen: "chat",
+      messages: [{ kind: "user", text: EXAMPLES[0] }, Object.assign({}, ANSWERS.calibre)],
+      history: HISTORY_SEED, historyActive: 0, reveal: 3, threadTitle: HISTORY_SEED[0], feedback: {}, openCites: {}, quota: 6, view: "chat", noticeOpen: false
+    });
+  };
+
+  renderVals() {
+    const st = this.state;
+    const t = this.t();
+    const isMobile = st.width < 860;
+    const screen = st.screen;
+    const isLogin = screen === "login", isRegister = screen === "register";
+    const err = st.error;
+
+    const messages = st.messages.map((m, i) => {
+      const last = i === st.messages.length - 1;
+      const rv = last ? st.reveal : 3;
+      if (m.kind === "user") return { isUser: true, text: m.text };
+      if (m.kind === "insufficient") return {
+        isInsufficient: true, summary: m.summary, detail: m.detail,
+        suggestions: m.suggestions.map(t => ({ text: t, onPick: () => this.ask(t) })),
+        showFeedback: true, fb: this.fbFor(i)
+      };
+      if (m.kind === "error") return { isError: true, onRetry: () => { const q = m.query || st.threadTitle; this.setState(s => ({ messages: s.messages.slice(0, -1) })); this.ask(q, "calibre"); } };
+      const conf = m.confidence || 3;
+      return {
+        isAnswer: true,
+        summary: m.summary,
+        showExplanation: rv >= 2,
+        paragraphs: (m.paragraphs || []).map(t => ({ text: t })),
+        showCitations: rv >= 3,
+        citeCount: m.citations.length + (m.citations.length === 1 ? t.reference : t.references),
+        citations: m.citations.map((c, ci) => {
+          const k = i + "-" + ci;
+          const open = !!st.openCites[k];
+          return Object.assign({}, c, {
+            open, toggleLabel: open ? t.hide : t.seeText,
+            rowStyle: "border-bottom:" + (ci === m.citations.length - 1 ? "none" : "1px solid #EDEDEA"),
+            onToggle: () => this.setState(s => ({ openCites: Object.assign({}, s.openCites, { [k]: !s.openCites[k] }) }))
+          });
+        }),
+        confidenceBars: [0, 1, 2].map(n => ({
+          style: "width:14px;height:7px;background:" + (n < conf ? "#16181A" : "transparent") + ";border:1px solid " + (n < conf ? "#16181A" : "#C9C9C4")
+        })),
+        confidenceLabel: t.conf[m.confidenceLabel] || m.confidenceLabel,
+        confidenceNote: t.notes[m.confidenceNote] || m.confidenceNote,
+        showFeedback: rv >= 3,
+        fb: this.fbFor(i)
+      };
+    });
+
+    const navDefs = ["login", "register", "chat", "demo", "fail", "limit", "about", "ops"];
+
+    const st2 = this.state;
+    const opsRows = this.opsRows();
+    const pending = (st2.opsItems || []).filter(i => i.status === "pendiente").length;
+    const openItem = (st2.opsItems || []).filter(i => i.id === st2.opsOpen)[0] || null;
+    const narrow = st2.width < 860;
+    const chip = (on) => "background:" + (on ? "#16181A" : "#FFFFFF") + ";color:" + (on ? "#FFFFFF" : "#55595E") +
+      ";border:1px solid " + (on ? "#16181A" : "#E0E0DC") + ";padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer";
+    const th = (align) => "font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:#A2A6AA;text-align:" + align;
+    const usage = USAGE[st2.opsPeriod];
+    const limit = THRESHOLD[st2.opsPeriod];
+    const overCount = usage.rows.filter(r => r[1] > limit).length;
+
+    const opsVals = {
+      isOps: screen === "ops",
+      opsIsQueue: st2.opsView === "queue" && !st2.opsOpen,
+      opsIsDetail: st2.opsView === "queue" && !!openItem,
+      opsIsUsage: st2.opsView === "usage",
+      onExitOps: () => this.setState({ screen: "chat", view: "chat", opsOpen: null }),
+      opsTabs: [["queue", t.tabReview, pending], ["usage", t.tabUsage, null]].map(([id, label, count]) => ({
+        label,
+        count: count === null ? "" : String(count),
+        countStyle: count === null ? "display:none" : "font-family:'IBM Plex Mono',monospace;font-size:10px;margin-left:7px;background:" +
+          (st2.opsView === id ? "#FFFFFF" : "#E4E4E1") + ";color:#16181A;padding:1px 5px",
+        style: "display:flex;align-items:center;background:" + (st2.opsView === id ? "#16181A" : "transparent") + ";color:" +
+          (st2.opsView === id ? "#FFFFFF" : "#55595E") + ";border:none;padding:6px 12px;font-size:12.5px;font-weight:500;cursor:pointer",
+        onPick: () => this.setState({ opsView: id, opsOpen: null })
+      })),
+
+      queueCountLabel: pending + (pending === 1 ? t.pendingOne : t.pendingMany) + " · " + (st2.opsItems || []).length + t.totalSuffix,
+      queueCols: QUEUE_COLS,
+      queueHeaders: [[t.hId,"left"],[t.hQuery,"left"],[t.hReason,"left"],[t.hWhen,"left"],[t.hStatus,"left"]].map(([label, a]) => ({ label, style: th(a) })),
+      queueHasRows: opsRows.length > 0,
+      queueEmpty: opsRows.length === 0,
+      queueEmptyTitle: st2.opsStatus === "pendiente" && st2.opsReason === "todos" ? t.queueEmptyT1 : t.queueEmptyT2,
+      queueEmptyHelp: st2.opsStatus === "pendiente" && st2.opsReason === "todos"
+        ? t.queueEmptyH1
+        : t.queueEmptyH2,
+      queueRows: opsRows.map(it => {
+        const v = this.statusVisual(it.status);
+        return {
+          id: it.id, query: it.query, reason: this.reasonLabel(it.reason), when: t.when[it.when] || it.when,
+          status: this.statusWord(it.status), markStyle: v.mark,
+          statusStyle: "font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.04em;color:" + v.color + ";font-weight:" + v.weight,
+          rowStyle: "display:grid;grid-template-columns:" + QUEUE_COLS +
+            ";gap:12px;align-items:center;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #EDEDEA;padding:10px 14px;cursor:pointer",
+          onOpen: () => this.setState({ opsOpen: it.id })
+        };
+      }),
+
+      statusFilters: [["pendiente",t.fPending],["revisada",t.fReviewed],["descartada",t.fDiscarded],["todas",t.fAll]].map(([id,label]) => ({
+        label, style: chip(st2.opsStatus === id), onPick: () => this.setState({ opsStatus: id })
+      })),
+      reasonFilters: [{ id:"todos", label:t.fAllReasons }].concat(REASONS.map(r => ({ id: r.id, label: r.short }))).map(r => ({
+        label: r.label, style: chip(st2.opsReason === r.id), onPick: () => this.setState({ opsReason: r.id })
+      })),
+      onBackToQueue: () => this.setState({ opsOpen: null }),
+      dtCols: narrow ? "1fr" : "1fr 1fr",
+
+      periods: [["7","7" + t.days],["30","30" + t.days],["90","90" + t.days]].map(([id,label]) => ({
+        label, style: chip(st2.opsPeriod === id), onPick: () => this.setState({ opsPeriod: id })
+      })),
+      kpiCols: narrow ? "1fr" : "repeat(3, 1fr)",
+      kpis: [
+        { label:t.kpiQueries, value: usage.consultas, note: t.ranges[usage.rango] || usage.rango },
+        { label:t.kpiTokens, value: usage.tokens, note:t.kpiTokensNote },
+        { label:t.kpiCost, value: usage.costo + " MXN", note:t.kpiCostNote }
+      ],
+      thresholdLabel: t.thresholdA + limit + t.thresholdB,
+      usageCols: USAGE_COLS,
+      usageHeaders: [[t.uUser,"left"],[t.uQueries,"right"],[t.uTokens,"right"],[t.uCost,"right"],[t.uState,"right"]].map(([label,a]) => ({ label, style: th(a) })),
+      usageRows: usage.rows.map((r, i) => {
+        const over = r[1] > limit;
+        const shown = st2.revealed[r[0]];
+        return {
+          identity: shown ? REAL_NAMES[r[0]] : r[0],
+          revealLabel: shown ? t.hide : t.reveal,
+          revealStyle: "background:none;border:none;padding:0;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#A2A6AA;cursor:pointer;text-decoration:underline;text-underline-offset:3px",
+          onReveal: () => this.setState(s => ({ revealed: Object.assign({}, s.revealed, { [r[0]]: !s.revealed[r[0]] }) })),
+          consultas: String(r[1]), tokens: r[2], costo: r[3] + " MXN",
+          state: over ? t.over : t.normal,
+          markStyle: "width:7px;height:7px;flex:none;" + (over ? "background:#C9A227" : "border:1.5px solid #C9C9C4"),
+          stateStyle: "font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.04em;color:" + (over ? "#16181A" : "#8A8F95") + ";font-weight:" + (over ? "500" : "400"),
+          rowStyle: "display:grid;grid-template-columns:" + USAGE_COLS +
+            ";gap:12px;align-items:center;padding:9px 14px;border-bottom:" + (i === usage.rows.length - 1 ? "none" : "1px solid #EDEDEA")
+        };
+      }),
+      usageFootnote: overCount === 0
+        ? t.footNone
+        : overCount + (overCount === 1 ? t.footOne : t.footMany) + t.footTail
+    };
+
+    if (openItem) {
+      const shown = st2.revealed[openItem.user];
+      const v = this.statusVisual(openItem.status);
+      opsVals.dt = {
+        id: openItem.id, query: openItem.query, when: t.when[openItem.when] || openItem.when,
+        status: this.statusWord(openItem.status), markStyle: v.mark,
+        statusStyle: "font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.04em;color:" + v.color + ";font-weight:" + v.weight,
+        summary: openItem.summary,
+        confidenceLabel: t.conf[openItem.confidenceLabel] || openItem.confidenceLabel,
+        confidenceBars: [0,1,2].map(n => ({ style: "width:12px;height:6px;background:" + (n < openItem.confidence ? "#16181A" : "transparent") + ";border:1px solid " + (n < openItem.confidence ? "#16181A" : "#C9C9C4") })),
+        citeCount: openItem.citations.length + (openItem.citations.length === 1 ? t.cite : t.cites),
+        citations: openItem.citations,
+        reason: this.reasonLabel(openItem.reason),
+        hasComment: !!openItem.comment, comment: openItem.comment,
+        identity: shown ? openItem.real : openItem.user,
+        revealLabel: shown ? t.hideIdentity : t.revealIdentity,
+        revealStyle: "background:none;border:1px solid #E0E0DC;padding:3px 8px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#55595E;cursor:pointer",
+        onReveal: () => this.setState(s => ({ revealed: Object.assign({}, s.revealed, { [openItem.user]: !s.revealed[openItem.user] }) })),
+        causes: CAUSES.map((c, ci) => ({
+          label: t.causes[c.id],
+          style: "display:flex;align-items:baseline;gap:11px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid #EDEDEA;padding:9px 2px;font-size:13px;color:" +
+            (openItem.cause === c.id ? "#16181A" : "#2A2D30") + ";cursor:pointer;font-weight:" + (openItem.cause === c.id ? "500" : "400"),
+          mark: "width:7px;height:7px;flex:none;transform:translateY(1px);" + (openItem.cause === c.id ? "background:#16181A" : "border:1.5px solid #C9C9C4"),
+          onPick: () => this.opsPatch(openItem.id, { cause: openItem.cause === c.id ? null : c.id })
+        })),
+        evalStyle: "background:" + (openItem.cause ? "#16181A" : "#E4E4E1") + ";color:" + (openItem.cause ? "#FFFFFF" : "#A2A6AA") +
+          ";border:none;padding:9px 13px;font-size:13px;font-weight:500;text-align:left;cursor:" + (openItem.cause ? "pointer" : "default"),
+        secondaryStyle: "background:none;border:1px solid #E0E0DC;padding:9px 13px;font-size:13px;color:#16181A;text-align:left;cursor:pointer",
+        onEval: () => openItem.cause && this.opsPatch(openItem.id, { status: "revisada", inEval: true }),
+        onReviewed: () => this.opsPatch(openItem.id, { status: "revisada" }),
+        onDiscard: () => this.opsPatch(openItem.id, { status: "descartada" }),
+        destinoNote: openItem.inEval ? t.destInEval
+          : openItem.cause ? t.destReady
+          : t.destNeedCause
+      };
+    } else {
+      opsVals.dt = {};
+    }
+
+    return Object.assign(opsVals, {
+      isAuth: isLogin || isRegister,
+      isChat: screen === "chat",
+      isLogin, isRegister,
+      authTitle: isRegister ? t.authTitleReg : t.authTitleLogin,
+      authSubtitle: isRegister ? t.authSubReg : t.authSubLogin,
+      authCta: isRegister ? t.authCtaReg : t.authCtaLogin,
+      authSwitchLabel: isRegister ? t.authSwitchRegLabel : t.authSwitchLoginLabel,
+      authSwitchCta: isRegister ? t.authSwitchRegCta : t.authSwitchLoginCta,
+      onSwitchAuth: (e) => { e.preventDefault(); this.setState({ screen: isRegister ? "login" : "register", error: null }); },
+      emailVal: st.email, passVal: st.pass, nameVal: st.name,
+      onEmail: e => this.setState({ email: e.target.value }),
+      onPass: e => this.setState({ pass: e.target.value }),
+      onName: e => this.setState({ name: e.target.value }),
+      onAuthKey: e => { if (e.key === "Enter") this.submit(isRegister); },
+      onSubmit: () => this.submit(isRegister),
+      formError: !!err,
+      formErrorTitle: err && err.title,
+      formErrorHelp: err && err.help,
+
+      sidebarVisible: !isMobile || st.sidebarOpen,
+      showMenuButton: isMobile && !st.sidebarOpen,
+      isMobile,
+      sidebarStyle: (isMobile
+        ? "position:fixed;inset:0 auto 0 0;width:300px;z-index:40;box-shadow:0 0 0 100vw rgba(22,24,26,.28);"
+        : "width:274px;flex:none;") + "background:#F7F7F4;border-right:1px solid #E4E4E1;display:flex;flex-direction:column;height:100%;overflow:hidden",
+      toggleSidebar: () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen })),
+      onNewQuery: () => this.setState({ messages: [], reveal: 3, threadTitle: null, historyActive: -1, generating: false, feedback: {}, openCites: {}, sidebarOpen: !isMobile, view: "chat", noticeOpen: true }),
+
+      calculators: [1, 2, 3].map(n => ({ label: t.calculator + " " + n })),
+
+      isOperator: st.role === "ops",
+      opsBadge: (st.opsItems || []).filter(i => i.status === "pendiente").length,
+      opsBadgeStyle: (st.opsItems || []).filter(i => i.status === "pendiente").length
+        ? "margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10px;background:#E4E4E1;color:#16181A;padding:1px 5px"
+        : "display:none",
+      onEnterOps: () => this.setState({ screen: "ops", opsView: "queue", opsOpen: null }),
+
+      settingsOpen: st.settingsOpen,
+      onOpenSettings: () => this.setState({ settingsOpen: true }),
+      onCloseSettings: () => this.setState({ settingsOpen: false, pwOpen: false, delHist: "idle", delAcct: "idle", delAcctVal: "", settingsSaveError: "" }),
+      onScrimClick: () => this.renderVals().onCloseSettings(),
+      stop: e => e && e.stopPropagation && e.stopPropagation(),
+      accountName: st.accountName, accountEmail: st.accountEmail,
+      st_name: (() => { const tag = this.savedTag("name"); return {
+        val: st.nameDraft || st.accountName, onChange: e => this.setState({ nameDraft: e.target.value }),
+        style: tag.style, text: tag.text,
+        saveStyle: "background:#16181A;color:#FFF;border:none;padding:9px 13px;font-size:13px;font-weight:500;cursor:pointer",
+        onSave: () => { const v = (this.state.nameDraft || this.state.accountName).trim(); if (!v) return; this.setState({ accountName: v }); this.markSaved("name"); }
+      }; })(),
+      st_email: (() => { const tag = this.savedTag("email"); return {
+        val: st.emailDraft || st.accountEmail, onChange: e => this.setState({ emailDraft: e.target.value, emailError: "" }),
+        style: tag.style, text: tag.text, error: st.emailError,
+        saveStyle: "background:#16181A;color:#FFF;border:none;padding:9px 13px;font-size:13px;font-weight:500;cursor:pointer",
+        onSave: () => {
+          const v = (this.state.emailDraft || this.state.accountEmail).trim().toLowerCase();
+          if (!v) return;
+          if (v !== this.state.accountEmail.toLowerCase() && v === "lfuentes@iepsa.mx") return this.setState({ emailError: t.errEmailInUse });
+          this.setState({ accountEmail: v, emailError: "" }); this.markSaved("email");
+        }
+      }; })(),
+      pwIsClosed: !st.pwOpen, pwIsOpen: st.pwOpen,
+      onOpenPw: () => this.setState({ pwOpen: true, pwCurrent: "", pwNext: "", pwConfirm: "", pwError: "" }),
+      pw: {
+        current: st.pwCurrent, onCurrent: e => this.setState({ pwCurrent: e.target.value }),
+        next: st.pwNext, onNext: e => this.setState({ pwNext: e.target.value }),
+        confirm: st.pwConfirm, onConfirm: e => this.setState({ pwConfirm: e.target.value }),
+        error: st.pwError,
+        onCancel: () => this.setState({ pwOpen: false }),
+        onSave: () => {
+          if (this.state.pwCurrent !== "nom2012") return this.setState({ pwError: t.errPwCurrent });
+          if (this.state.pwNext.length < 8 || !/[0-9]/.test(this.state.pwNext)) return this.setState({ pwError: t.errPwNew });
+          if (this.state.pwNext !== this.state.pwConfirm) return this.setState({ pwError: t.errPwMatch });
+          this.setState({ pwOpen: false, pwError: "" }); this.markSaved("pw");
+        }
+      },
+      usageToday: (10 - st.quota) + t.usageTodaySuffix,
+      usageReset: t.usageReset,
+      delHistIsIdle: st.delHist === "idle", delHistIsConfirm: st.delHist === "confirm", delHistIsDone: st.delHist === "done",
+      onAskDelHist: () => this.setState({ delHist: "confirm" }),
+      onCancelDelHist: () => this.setState({ delHist: "idle" }),
+      onConfirmDelHist: () => this.setState({ delHist: "done", history: [], messages: [], threadTitle: null, historyActive: -1 }),
+      delAcctIsIdle: st.delAcct === "idle", delAcctIsConfirm: st.delAcct === "confirm",
+      delAcctVal: st.delAcctVal, onDelAcctChange: e => this.setState({ delAcctVal: e.target.value }),
+      onAskDelAcct: () => this.setState({ delAcct: "confirm", delAcctVal: "" }),
+      onCancelDelAcct: () => this.setState({ delAcct: "idle", delAcctVal: "" }),
+      delAcctConfirmStyle: "background:" + (st.delAcctVal === t.deleteWord ? "#16181A" : "#E4E4E1") + ";color:" + (st.delAcctVal === t.deleteWord ? "#FFF" : "#A2A6AA") +
+        ";border:none;padding:8px 14px;font-size:13px;font-weight:500;cursor:" + (st.delAcctVal === t.deleteWord ? "pointer" : "default"),
+      onConfirmDelAcct: () => { if (this.state.delAcctVal !== this.t().deleteWord) return; this.setState({ screen: "login", settingsOpen: false, messages: [], history: [] }); },
+      settingsSaveError: st.settingsSaveError,
+
+      viewIsChat: st.view === "chat",
+      viewIsAbout: st.view === "about",
+      onAbout: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ view: "about", sidebarOpen: !isMobile }); },
+      onBackToChat: () => this.setState({ view: "chat" }),
+      aboutNavStyle: "display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:" + (st.view === "about" ? "#EAEAE5" : "none") + ";border:none;padding:8px 10px;font-size:13.5px;color:" + (st.view === "about" ? "#16181A" : "#55595E") + ";cursor:pointer;font-weight:" + (st.view === "about" ? "500" : "400"),
+
+      t,
+      langOptions: [["es", "Español"], ["en", "English"]].map(([id, label]) => {
+        const on = st.lang === id;
+        return {
+          label,
+          authStyle: "background:none;border:none;padding:3px 7px;font-size:12.5px;cursor:pointer;color:" + (on ? "#16181A" : "#8A8F95") + ";font-weight:" + (on ? "500" : "400") + ";text-decoration:" + (on ? "underline" : "none") + ";text-underline-offset:4px",
+          chipStyle: "flex:1;background:" + (on ? "#16181A" : "#FFFFFF") + ";color:" + (on ? "#FFFFFF" : "#55595E") + ";border:1px solid " + (on ? "#16181A" : "#D8D8D4") + ";padding:9px 14px;font-size:13.5px;font-weight:" + (on ? "500" : "400") + ";cursor:pointer",
+          formStyle: "flex:1;background:" + (on ? "#F1F1EE" : "#FFFFFF") + ";color:" + (on ? "#16181A" : "#8A8F95") + ";border:1px solid " + (on ? "#16181A" : "#D8D8D4") + ";padding:8px 12px;font-size:13.5px;font-weight:" + (on ? "500" : "400") + ";cursor:pointer",
+          onPick: () => { if (this.state.lang === id) return; this.setState({ lang: id, regLang: id }); if (this.state.settingsOpen) this.markSaved("lang"); }
+        };
+      }),
+      st_lang: (() => { const tag = this.savedTag("lang"); return { style: tag.style, text: tag.text }; })(),
+      sessionNorm: SESSION_NORM,
+      sessionDate: SESSION_DATE,
+      noticeOpen: st.noticeOpen,
+      noticeCollapsed: !st.noticeOpen,
+      toggleNotice: () => this.setState(s => ({ noticeOpen: !s.noticeOpen })),
+
+      coverCols: isMobile ? "1fr" : "1fr 1fr",
+      sourcesFootnote: SOURCES.length + t.sourcesFootA + "12 mar 2026",
+      sources: SOURCES.map((s, i) => {
+        const vigente = s.estado === "vigente";
+        return {
+          clave: s.clave, nombre: s.nombre, nota: s.nota,
+          estado: vigente ? t.estVigente : (s.estado === "transición" ? t.estTransicion : t.estSustituida),
+          rowStyle: "padding:18px;border-bottom:" + (i === SOURCES.length - 1 ? "none" : "1px solid #EDEDEA") + (vigente ? "" : ";background:#FAFAF8"),
+          markStyle: "width:8px;height:8px;" + (vigente ? "background:#16181A" : "border:1.5px solid #A2A6AA"),
+          estadoStyle: "font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:" + (vigente ? "#16181A" : "#8A8F95") + ";font-weight:" + (vigente ? "500" : "400"),
+          fields: [
+            { label: t.fVersion, value: s.version },
+            { label: t.fPublication, value: s.publicacion },
+            { label: t.fLoaded, value: s.incorporada }
+          ]
+        };
+      }),
+      covers: (t.covers || [
+        "Qué exige la norma sobre un caso concreto: calibres, protecciones, puesta a tierra, canalizaciones, espacios de trabajo.",
+        "Localizar el artículo o la tabla aplicable y leer su texto literal.",
+        "Comparar requisitos entre secciones y entender de qué depende un valor.",
+        "Verificar si un criterio que ya traías está respaldado por el texto normativo."
+      ]).map(x => ({ text: x })),
+      notCovers: (t.notCovers || [
+        "Cálculos de proyecto: memorias, cuadros de carga, dimensionamiento completo de una instalación.",
+        "Dictámenes, aprobaciones o cualquier documento con validez ante una unidad de verificación.",
+        "Verificación de instalaciones existentes: eso requiere inspección física.",
+        "Normas no incorporadas al sistema, reglamentos locales y criterios de la compañía suministradora."
+      ]).map(x => ({ text: x })),
+      anatomy: t.anatomy || [
+        { num: "01", name: "Resumen", text: "La respuesta directa, en una o dos frases. Si solo lees una parte, lee esta." },
+        { num: "02", name: "Explicación", text: "El desarrollo técnico: de qué depende el valor, qué factores lo modifican y cuándo deja de aplicar." },
+        { num: "03", name: "Citas", text: "Capítulo, artículo y página de donde salió cada afirmación. Se abren en línea para leer el texto literal sin salir de la conversación." },
+        { num: "04", name: "Confianza", text: "Qué tan sustentada está la respuesta en el texto recuperado. No mide qué tan correcta es la instalación que estás proyectando." }
+      ],
+      confidenceLevels: (t.confidenceLevels || [
+        { n: 3, label: "Alta", text: "Varias citas concordantes que responden directamente la consulta. Verifica las citas y aplica." },
+        { n: 2, label: "Media", text: "El texto responde, pero el valor depende de condiciones que la consulta no especificó. Lee la explicación completa antes de aplicar." },
+        { n: 1, label: "Baja", text: "El respaldo es parcial o indirecto. Trátala como punto de partida: abre las citas, verifica en el documento oficial y consulta a un profesional responsable." }
+      ]).map((l, i) => ({
+        label: l.label, text: l.text,
+        rowStyle: "display:flex;gap:14px;padding:14px 16px;border-bottom:" + (i === 2 ? "none" : "1px solid #EDEDEA"),
+        bars: [0, 1, 2].map(n => ({ style: "width:14px;height:7px;background:" + (n < l.n ? "#16181A" : "transparent") + ";border:1px solid " + (n < l.n ? "#16181A" : "#C9C9C4") }))
+      })),
+      disclaimer: t.disclaimer || [
+        { title: "Qué hace el sistema", text: "Recupera fragmentos del texto normativo incorporado y redacta una respuesta a partir de ellos. Todo lo que afirma debe poder rastrearse a una cita; si no hay respaldo suficiente, lo declara en lugar de completar el hueco." },
+        { title: "Qué no hace", text: "No emite criterio profesional ni dictamen técnico, no aprueba ni rechaza instalaciones, y no sustituye al perito o al responsable de la obra. Tampoco considera reglamentos locales ni requisitos de la compañía suministradora." },
+        { title: "Errores posibles", text: "La redacción automática puede citar un artículo que no aplica al caso, omitir una excepción o arrastrar un valor de una tabla equivocada. Por eso cada respuesta trae la referencia: verifica siempre contra el texto oficial publicado antes de aplicar cualquier resultado." },
+        { title: "Responsabilidad", text: "La decisión técnica y su ejecución son del profesional que las firma. El uso de esta herramienta no transfiere esa responsabilidad." }
+      ],
+      onLogout: () => this.setState({ screen: "login", messages: [], history: [], pass: "" }),
+      noop: e => e && e.preventDefault && e.preventDefault(),
+
+      hasHistory: st.history.length > 0,
+      noHistory: st.history.length === 0,
+      history: st.history.map((h, i) => ({
+        topic: h,
+        style: "width:100%;text-align:left;background:" + (i === st.historyActive ? "#EAEAE5" : "none") +
+          ";border:none;border-left:2px solid " + (i === st.historyActive ? "#6B5BA6" : "transparent") +
+          ";padding:8px 10px;font-size:13px;color:" + (i === st.historyActive ? "#16181A" : "#55595E") +
+          ";cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:" + (i === st.historyActive ? "500" : "400"),
+        onOpen: () => this.setState({ historyActive: i, threadTitle: h, sidebarOpen: !isMobile })
+      })),
+
+      threadTitle: st.threadTitle || t.newQuery,
+      isEmpty: st.messages.length === 0 && !st.generating,
+      examples: EXAMPLES.map((t, i) => ({ text: t, num: String(i + 1).padStart(2, "0"), onPick: () => this.ask(t) })),
+      messages,
+      generating: st.generating,
+      generatingLabel: st.genStep === 0 ? t.gen1 : t.gen2,
+      pulseStyle: "width:8px;height:8px;background:#6B5BA6;animation:nomPulse 1.1s ease-in-out infinite",
+
+      quotaTicks: Array.from({ length: QUOTA_TOTAL }, (v, n) => ({
+        style: "width:8px;height:8px;flex:none;" + (n < st.quota
+          ? "background:" + (st.quota >= 8 ? "#B6B9BC" : "#55595E")
+          : "border:1px solid #DCDCD8")
+      })),
+      quotaText: st.quota === 0 ? t.quotaNone
+        : st.quota + (st.quota === 1 ? t.quotaOne : t.quotaMany),
+      quotaTextStyle: "margin-top:8px;font-size:12.5px;color:" +
+        (st.quota === 0 ? "#16181A" : st.quota <= 7 ? "#2A2D30" : "#55595E") +
+        ";font-weight:" + (st.quota === 0 ? "600" : st.quota <= 7 ? "500" : "400"),
+      quotaHint: st.quota === 0 ? t.quotaHint0
+        : st.quota <= 7 ? t.quotaHintLow : "",
+      quotaSpent: st.quota === 0,
+      quotaLimitMessage: t.quotaLimitA + QUOTA_TOTAL + t.quotaLimitB,
+
+      draft: st.draft,
+      onDraft: e => this.setState({ draft: e.target.value }),
+      onDraftKey: e => { if (e.key === "Enter") this.ask(this.state.draft); },
+      onSend: () => this.ask(this.state.draft),
+      sendStyle: "border:none;background:" + (st.draft.trim() && st.quota > 0 ? "#16181A" : "#E4E4E1") + ";color:" +
+        (st.draft.trim() && st.quota > 0 ? "#FFF" : "#A2A6AA") +
+        ";padding:0 18px;font-size:14px;font-weight:500;cursor:" + (st.draft.trim() && st.quota > 0 ? "pointer" : "default"),
+
+      navStyle: "position:fixed;z-index:60;display:flex;gap:1px;background:#16181A;padding:3px;box-shadow:0 6px 20px rgba(22,24,26,.18);" + ((isLogin || isRegister) ? (st.width < 560 ? "top:10px;left:50%;transform:translateX(-50%)" : "top:12px;left:12px") : "bottom:52px;right:16px"),
+      navItems: navDefs.map((id) => {
+        const inChat = screen === "chat" && st.view === "chat";
+        const active = id === "limit" ? (inChat && st.quota === 0)
+          : id === "ops" ? (screen === "ops")
+          : id === "about" ? (screen === "chat" && st.view === "about")
+          : id === "fail" ? (inChat && st.messages.length > 0 && st.messages[st.messages.length - 1].kind === "error")
+          : id === "demo" ? (inChat && st.messages.length > 0 && st.messages[st.messages.length - 1].kind !== "error")
+          : (screen === id && !(id === "chat" && (st.messages.length > 0 || st.view === "about")));
+        return {
+          label: t.nav[id],
+          style: "background:" + (active ? "#FBFBFA" : "transparent") + ";color:" + (active ? "#16181A" : "#B6B9BC") +
+            ";border:none;padding:5px 11px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.03em;cursor:pointer",
+          onPick: () => id === "demo" ? this.loadDemo()
+            : id === "ops" ? this.setState({ screen: "ops", role: "ops", opsView: "queue", opsOpen: null })
+            : id === "limit" ? this.loadLimit()
+            : id === "fail" ? this.loadError()
+            : id === "about" ? this.setState({ screen: "chat", view: "about", error: null, history: st.history.length ? st.history : HISTORY_SEED })
+            : this.setState({ screen: id, error: null, view: "chat", threadTitle: id === "chat" ? "Nueva consulta" : st.threadTitle, historyActive: id === "chat" ? -1 : st.historyActive, noticeOpen: id === "chat" ? true : st.noticeOpen, messages: id === "chat" ? [] : st.messages, history: id === "chat" ? [] : st.history })
+        };
+      })
+    });
+  }
+
+  submit(isRegister) {
+    const t = this.t();
+    const { email, pass, name } = this.state;
+    if (isRegister) {
+      if (email.trim().toLowerCase() === "rmartinez@iepsa.mx") return this.setState({ error: t.errEmailTaken });
+      if (pass.length < 8 || !/[0-9]/.test(pass)) return this.setState({ error: t.errPwReq });
+      if (!name.trim() || !email.trim()) return this.setState({ error: t.errMissing });
+      return this.setState({ screen: "chat", error: null, messages: [], history: [], lang: this.state.regLang });
+    }
+    if (!email.trim() || !pass) return this.setState({ error: t.errCreds });
+    if (pass !== "nom2012") return this.setState({ error: t.errBadCreds });
+    this.setState({ screen: "chat", error: null, messages: [], history: HISTORY_SEED, historyActive: -1, role: /^ops@/i.test(email.trim()) ? "ops" : "user" });
+  }
+}
+
+</script>
+</body>
+</html>

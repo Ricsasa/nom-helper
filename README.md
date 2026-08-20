@@ -1,71 +1,71 @@
 # Next boilerplate
 
-Punto de partida para proyectos Next.js 15 + React 19 con backend Supabase o Convex. **Sin decisiones visuales**: Tailwind está instalado pero su configuración no define ni un color, ni un espaciado, ni una escala tipográfica. Cada proyecto encima de esta base elige su propio lenguaje visual.
+A starting point for Next.js 15 and React 19 projects with a Supabase or Convex backend. **No visual decisions**: Tailwind is installed, but its configuration defines no color, no spacing, and no type scale. Each project on top of this base picks its own visual language.
 
-## Puesta en marcha
+## Getting started
 
 ```bash
-git clone <este-repo> mi-proyecto && cd mi-proyecto
+git clone <this-repo> my-project && cd my-project
 rm -rf .git && git init
 npm install
-npm run setup supabase     # o: npm run setup convex
-cp .env.local.example .env.local   # la variante lo deja en la raíz
+npm run setup supabase     # or: npm run setup convex
+cp .env.local.example .env.local   # the variant leaves it in the root
 npm run dev
 ```
 
-Después: cambia `name` en `package.json`, el `<title>` y el `metadata` de [app/layout.tsx](app/layout.tsx), y borra `variants/` cuando ya no la necesites.
+Then: change `name` in `package.json`, change the `<title>` and the `metadata` in [app/layout.tsx](app/layout.tsx), and delete `variants/` once you no longer need it.
 
-## Qué trae el núcleo
+## What the core brings
 
-| Área | Qué hay |
+| Area | What it has |
 | --- | --- |
-| Framework | Next.js 15 (App Router), React 19, TypeScript en modo estricto, alias `@/*` |
-| Estado servidor | React Query con `staleTime` de 5 min y claves centralizadas en [lib/query-keys.ts](lib/query-keys.ts) |
-| Estado cliente | Zustand, solo para estado de interfaz ([lib/store.ts](lib/store.ts)) |
-| Tema | `next-themes` con `attribute="class"`, alineado con `darkMode: 'class'` de Tailwind |
-| Idioma | Contexto propio en/es con `t('clave.anidada')` e interpolación `{{var}}` ([lib/i18n/](lib/i18n/)) |
-| Avisos | `ToastProvider` con roles `status` y `alert`, sin estilos |
-| Validación | Primitivas reutilizables en [lib/validation.ts](lib/validation.ts), con pruebas |
-| Seguridad | CSP y cabeceras estrictas en [next.config.mjs](next.config.mjs) |
-| Pruebas | Jest + ts-jest + Testing Library, `jsdom` por defecto y `node` por docblock en las de API |
-| CI | Lint, tipos y pruebas, más despliegue de preview y de producción a Vercel |
-| Agentes | Skills `supabase` y `supabase-postgres-best-practices` en [.agents/skills/](.agents/skills/), plantillas de especificación en [docs/spec-templates/](docs/spec-templates/) |
+| Framework | Next.js 15 (App Router), React 19, TypeScript in strict mode, the `@/*` alias |
+| Server state | React Query with a 5 min `staleTime` and keys centralized in [lib/query-keys.ts](lib/query-keys.ts) |
+| Client state | Zustand, for interface state only ([lib/store.ts](lib/store.ts)) |
+| Theme | `next-themes` with `attribute="class"`, aligned with the Tailwind `darkMode: 'class'` setting |
+| Language | An en/es context of its own, with `t('nested.key')` and `{{var}}` interpolation ([lib/i18n/](lib/i18n/)) |
+| Notices | `ToastProvider` with the `status` and `alert` roles, unstyled |
+| Validation | Reusable primitives in [lib/validation.ts](lib/validation.ts), with tests |
+| Security | A strict CSP and headers in [next.config.mjs](next.config.mjs) |
+| Tests | Jest, ts-jest, and Testing Library. `jsdom` by default, and `node` by docblock in the API tests |
+| CI | Lint, types, and tests, plus preview and production deployment to Vercel |
+| Agents | The `supabase` and `supabase-postgres-best-practices` skills in [.agents/skills/](.agents/skills/), plus specification templates in [docs/spec-templates/](docs/spec-templates/) |
 
-## Variantes de backend
+## Backend variants
 
-`npm run setup <variante>` copia `variants/<variante>/files/` sobre la raíz e instala sus paquetes.
+`npm run setup <variant>` copies `variants/<variant>/files/` over the root and installs its packages.
 
-- **[supabase](variants/supabase/README.md)** — cliente de navegador y por petición, `authenticateRequest` con token Bearer, capa `app/api/**` con validación, helpers de respuesta, hooks de React Query, formulario de acceso y mock del query builder para pruebas. Extraído de un proyecto en producción.
-- **[convex](variants/convex/README.md)** — esquema, funciones con comprobación de identidad y propiedad, provider y página de referencia. Escrito para este boilerplate, sin proveedor de autenticación fijado.
+- **[supabase](variants/supabase/README.md)** — a browser client and a per-request client, `authenticateRequest` with a Bearer token, an `app/api/**` layer with validation, response helpers, React Query hooks, a sign-in form, and a query builder mock for tests. Extracted from a production project.
+- **[convex](variants/convex/README.md)** — a schema, functions that check identity and ownership, a provider, and a reference page. Written for this boilerplate, with no authentication provider fixed.
 
-Las dos variantes escriben archivos distintos salvo `components/providers/AppProviders.tsx` y `.env.local.example`. Instala una sola.
+The two variants write different files, except `components/providers/AppProviders.tsx` and `.env.local.example`. Install one only.
 
-## Convenciones
+## Conventions
 
-- **Los componentes no llaman a `fetch`.** Llaman a un hook, y el hook decide de dónde salen los datos.
-- **Una clave de React Query, un sitio.** Todas viven en `lib/query-keys.ts`, para que una invalidación no se separe de la clave con la que un hook se suscribió.
-- **El error 500 nunca lleva detalle.** `serverError` registra el error completo en el servidor y devuelve solo un `reference`.
-- **Las pruebas consultan por rol y texto accesible**, nunca por clase: aquí no hay estilos y las clases cambiarán.
-- **`lib/types.ts`, `queryKeys.items` y la tabla `items`** son el recurso de ejemplo. Bórralos en cuanto el dominio real exista.
+- **Components never call `fetch`.** They call a hook, and the hook decides where the data comes from.
+- **One React Query key, one place.** They all live in `lib/query-keys.ts`, so an invalidation never drifts from the key a hook subscribed with.
+- **A 500 error never carries detail.** `serverError` logs the full error on the server and returns a `reference` only.
+- **Tests query by role and accessible text**, never by class: there are no styles here, and the classes will change.
+- **`lib/types.ts`, `queryKeys.items`, and the `items` table** are the sample resource. Delete them as soon as the real domain exists.
 
 ## Scripts
 
 ```bash
-npm run dev          # servidor de desarrollo
-npm run build        # build de producción
+npm run dev          # development server
+npm run build        # production build
 npm run lint         # eslint (next/core-web-vitals)
 npm run type-check   # tsc --noEmit
 npm test             # jest
 npm run test:coverage
-npm run setup <v>    # instalar una variante de backend
+npm run setup <v>    # install a backend variant
 ```
 
-## Configuración de agentes
+## Agent configuration
 
-- `.claude/settings.json` se versiona; `.claude/settings.local.json` no. Copia `.claude/settings.local.json.example` para partir de una lista de permisos razonable.
-- `.mcp.json.example` — cópialo a `.mcp.json` y pon tu `project_ref` de Supabase.
-- `skills-lock.json` fija la versión de las skills de `.agents/skills/`.
+- `.claude/settings.json` is versioned; `.claude/settings.local.json` is not. Copy `.claude/settings.local.json.example` to start from a reasonable permission list.
+- `.mcp.json.example` — copy it to `.mcp.json` and set your Supabase `project_ref`.
+- `skills-lock.json` pins the version of the skills in `.agents/skills/`.
 
-## Despliegue
+## Deployment
 
-El workflow [.github/workflows/ci.yml](.github/workflows/ci.yml) verifica cada push y despliega a Vercel. Secretos necesarios: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` y las variables públicas del backend que uses. Con Convex, añade `npx convex deploy` al job de producción.
+The [.github/workflows/ci.yml](.github/workflows/ci.yml) workflow verifies every push and deploys to Vercel. Required secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, and the public variables of the backend you use. With Convex, add `npx convex deploy` to the production job.
