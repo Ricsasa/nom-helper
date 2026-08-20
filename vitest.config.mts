@@ -6,7 +6,7 @@ import { defineConfig } from 'vitest/config';
  */
 export default defineConfig({
   test: {
-    include: ['src/lib/db/__tests__/**/*.test.ts'],
+    include: ['src/lib/{db,auth}/__tests__/**/*.test.ts'],
     environment: 'node',
     setupFiles: ['./vitest.setup.ts'],
     // The suites share one local database. Running the files one at a time is
