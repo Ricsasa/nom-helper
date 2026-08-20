@@ -1,28 +1,28 @@
-# Variante Supabase
+# Supabase variant
 
-Instálala con `npm run setup supabase` desde la raíz del boilerplate. El script copia `files/` sobre la raíz e instala `@supabase/supabase-js`.
+Install it with `npm run setup supabase` from the boilerplate root. The script copies `files/` over the root and installs `@supabase/supabase-js`.
 
-## Qué añade
+## What it adds
 
-| Archivo | Para qué |
+| File | What for |
 | --- | --- |
-| `lib/supabase.ts` | cliente de navegador, cliente por petición con el token del usuario y `authenticateRequest` |
-| `lib/api-client.ts` | `authHeaders` y `apiRequest<T>` para el lado cliente |
-| `lib/api-response.ts` | respuestas uniformes, límite de 64 KB en el cuerpo y errores 500 sin filtrar detalles |
-| `lib/db-server.ts` | acceso a datos del servidor, con el recurso `items` de ejemplo |
-| `lib/db-queries.ts` | hooks de React Query sobre la API interna |
-| `app/api/items/**` | handlers de referencia: autenticar, leer, validar, consultar |
-| `app/auth/login\|signup` | páginas de acceso sin estilos |
-| `components/AuthForm.tsx` | formulario de acceso y registro |
-| `components/SessionGate.tsx` | protege el árbol autenticado y limpia la caché al cerrar sesión |
-| `__tests__/helpers/*` | `jsonRequest`, `malformedRequest` y el mock del query builder |
-| `__tests__/api/items.test.ts` | prueba de referencia de un handler |
+| `lib/supabase.ts` | the browser client, the per-request client with the user token, and `authenticateRequest` |
+| `lib/api-client.ts` | `authHeaders` and `apiRequest<T>` for the client side |
+| `lib/api-response.ts` | uniform responses, a 64 KB body limit, and 500 errors that leak no detail |
+| `lib/db-server.ts` | server-side data access, with the sample `items` resource |
+| `lib/db-queries.ts` | React Query hooks over the internal API |
+| `app/api/items/**` | reference handlers: authenticate, read, validate, query |
+| `app/auth/login\|signup` | unstyled access pages |
+| `components/AuthForm.tsx` | the sign-in and registration form |
+| `components/SessionGate.tsx` | protects the authenticated tree and clears the cache on sign out |
+| `__tests__/helpers/*` | `jsonRequest`, `malformedRequest`, and the query builder mock |
+| `__tests__/api/items.test.ts` | a reference test for one handler |
 
-## Puesta en marcha
+## Getting started
 
-1. Crea el proyecto en [supabase.com](https://supabase.com) y copia la URL y la clave publicable.
-2. `cp .env.local.example .env.local` y rellena los valores.
-3. Crea la tabla `items` con RLS activo. Usa `docs/spec-templates/DATABASE_SCHEMA.md` como guía:
+1. Create the project at [supabase.com](https://supabase.com) and copy the URL and the publishable key.
+2. Run `cp .env.local.example .env.local` and fill in the values.
+3. Create the `items` table with RLS enabled. Use `docs/spec-templates/DATABASE_SCHEMA.md` as the guide:
 
 ```sql
 create table public.items (
@@ -48,10 +48,10 @@ create policy "items_delete_own" on public.items
   for delete to authenticated using ((select auth.uid()) = user_id);
 ```
 
-4. Opcional: `cp .mcp.json.example .mcp.json` y pon tu `project_ref` para hablar con Supabase desde el agente.
+4. Optional: run `cp .mcp.json.example .mcp.json` and set your `project_ref`, so the agent can talk to Supabase.
 
-## Reglas
+## Rules
 
-- El navegador nunca escribe en la base de datos directamente: pasa por `app/api/**`, que valida antes de tocar Postgres.
-- RLS es la frontera de seguridad. El filtro `user_id` en `lib/db-server.ts` es un segundo cierre, no el primero.
-- Las skills `supabase` y `supabase-postgres-best-practices` de `.agents/skills/` cubren esquema, RLS, índices y migraciones.
+- The browser never writes to the database directly. It goes through `app/api/**`, which validates before it touches Postgres.
+- RLS is the security boundary. The `user_id` filter in `lib/db-server.ts` is a second lock, not the first one.
+- The `supabase` and `supabase-postgres-best-practices` skills in `.agents/skills/` cover schema, RLS, indexes, and migrations.

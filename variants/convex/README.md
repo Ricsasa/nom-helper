@@ -1,37 +1,37 @@
-# Variante Convex
+# Convex variant
 
-Instálala con `npm run setup convex` desde la raíz del boilerplate. El script copia `files/` sobre la raíz e instala `convex`.
+Install it with `npm run setup convex` from the boilerplate root. The script copies `files/` over the root and installs `convex`.
 
-> Esta variante no viene del proyecto original: está escrita desde cero para este boilerplate. La de Supabase sí está extraída de código en producción.
+> This variant does not come from the original project. It is written from scratch for this boilerplate. The Supabase variant is extracted from production code.
 
-## Qué añade
+## What it adds
 
-| Archivo | Para qué |
+| File | What for |
 | --- | --- |
-| `convex/schema.ts` | tabla `items` de ejemplo con índice `by_user` |
-| `convex/items.ts` | query y mutations de referencia, con comprobación de identidad y de propiedad |
-| `components/providers/ConvexProvider.tsx` | cliente de Convex, creado una sola vez a nivel de módulo |
-| `components/providers/AppProviders.tsx` | sustituye al del núcleo: monta Convex en lugar de React Query |
-| `app/items/page.tsx` | página de referencia con `useQuery` y `useMutation` |
+| `convex/schema.ts` | the sample `items` table with a `by_user` index |
+| `convex/items.ts` | reference query and mutations, with identity and ownership checks |
+| `components/providers/ConvexProvider.tsx` | the Convex client, created once at module level |
+| `components/providers/AppProviders.tsx` | replaces the core file: it mounts Convex instead of React Query |
+| `app/items/page.tsx` | a reference page with `useQuery` and `useMutation` |
 
-## Puesta en marcha
+## Getting started
 
-1. `npx convex dev` — crea el deployment, genera `convex/_generated/` y escribe `NEXT_PUBLIC_CONVEX_URL` y `CONVEX_DEPLOYMENT` en `.env.local`.
-2. Deja ese proceso corriendo en una terminal y `npm run dev` en otra.
-3. Hasta que el paso 1 termine, `convex/_generated/` no existe y `npm run type-check` falla en `convex/items.ts` y en `app/items/page.tsx`. Es esperado.
+1. `npx convex dev` — it creates the deployment, generates `convex/_generated/`, and writes `NEXT_PUBLIC_CONVEX_URL` and `CONVEX_DEPLOYMENT` into `.env.local`.
+2. Leave that process running in one terminal and run `npm run dev` in another.
+3. Until step 1 finishes, `convex/_generated/` does not exist and `npm run type-check` fails in `convex/items.ts` and in `app/items/page.tsx`. That is expected.
 
-## Autenticación
+## Authentication
 
-El boilerplate no fija proveedor. Elige uno:
+The boilerplate fixes no provider. Pick one:
 
-- **Convex Auth**: `npm create convex@latest -- --auth`, o `npx @convex-dev/auth` sobre este proyecto. Después cambia `ConvexProvider` por `ConvexAuthNextjsProvider` en `AppProviders.tsx`.
-- **Clerk**: envuelve con `ConvexProviderWithClerk`.
+- **Convex Auth**: `npm create convex@latest -- --auth`, or run `npx @convex-dev/auth` on this project. Then replace `ConvexProvider` with `ConvexAuthNextjsProvider` in `AppProviders.tsx`.
+- **Clerk**: wrap the tree with `ConvexProviderWithClerk`.
 
-`ctx.auth.getUserIdentity()` funciona igual con cualquiera de los dos, así que `convex/items.ts` no cambia.
+`ctx.auth.getUserIdentity()` works the same with either one, so `convex/items.ts` does not change.
 
-## Diferencias con la variante Supabase
+## Differences from the Supabase variant
 
-- **No hay RLS.** La autorización es código: cada función llama a `requireUserId` y comprueba la propiedad del documento antes de escribir. Un id de documento se puede adivinar.
-- **No hay `app/api/**`.** Las funciones de `convex/` son el backend; no hace falta capa REST intermedia.
-- **No hay React Query.** `useQuery` de Convex ya es reactivo y se actualiza solo tras una mutación. Si además hablas con una API REST, vuelve a montar `QueryProvider` en `AppProviders.tsx`.
-- **Despliegue:** además de Vercel, la producción de Convex se publica con `npx convex deploy`. Añádelo al workflow si usas CI.
+- **There is no RLS.** Authorization is code: every function calls `requireUserId` and checks document ownership before it writes. A document id can be guessed.
+- **There is no `app/api/**`.** The functions in `convex/` are the backend, so no intermediate REST layer is needed.
+- **There is no React Query.** The Convex `useQuery` is already reactive and refreshes itself after a mutation. If you also talk to a REST API, mount `QueryProvider` again in `AppProviders.tsx`.
+- **Deployment:** besides Vercel, the Convex production deployment ships with `npx convex deploy`. Add that command to the workflow when you use CI.

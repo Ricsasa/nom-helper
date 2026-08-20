@@ -1,28 +1,28 @@
-# API interna
+# Internal API
 
-> Plantilla. Rellena una fila por endpoint antes de escribir el handler y bórrala si el proyecto no expone API propia (Convex no la necesita).
+> Template. Fill one row per endpoint before you write the handler. Delete this file if the project exposes no API of its own (Convex does not need one).
 
-## Convenciones
+## Conventions
 
-- Todos los handlers viven en `app/api/**/route.ts`.
-- Autenticación: cabecera `Authorization: Bearer <access_token>`; el handler llama a `authenticateRequest(request)` y responde 401 si devuelve `null`.
-- Cuerpo: se lee con `readJsonBody`, que rechaza cargas mayores de 64 KB y JSON inválido (400).
-- Respuestas: `jsonOk`, `jsonError`, `unauthorized`, `notFound`, `serverError`. El detalle de un error 500 nunca cruza la red; solo viaja el `reference` que lo enlaza con el log del servidor.
-- Validación: primitivas de `lib/validation.ts`, encadenadas con `??`, antes de tocar la base de datos.
+- Every handler lives in `app/api/**/route.ts`.
+- Authentication: the `Authorization: Bearer <access_token>` header. The handler calls `authenticateRequest(request)` and answers 401 when the call returns `null`.
+- Body: read it with `readJsonBody`. That helper rejects payloads larger than 64 KB and invalid JSON with a 400.
+- Responses: `jsonOk`, `jsonError`, `unauthorized`, `notFound`, `serverError`. The detail of a 500 error never crosses the network. Only the `reference` travels, which links the response to the server log.
+- Validation: use the primitives in `lib/validation.ts`, chained with `??`, before you touch the database.
 
 ## Endpoints
 
-| Método | Ruta | Auth | Cuerpo | Respuesta 2xx | Errores |
+| Method | Route | Auth | Body | 2xx response | Errors |
 | --- | --- | --- | --- | --- | --- |
-| GET | `/api/items` | Sí | — | `200 { items: Item[] }` | 401, 500 |
-| POST | `/api/items` | Sí | `{ name: string }` | `201 { item: Item }` | 400, 401, 500 |
-| PATCH | `/api/items/[id]` | Sí | `{ name?: string }` | `200 { item: Item }` | 400, 401, 404, 500 |
-| DELETE | `/api/items/[id]` | Sí | — | `200 { success: true }` | 401, 404, 500 |
+| GET | `/api/items` | Yes | — | `200 { items: Item[] }` | 401, 500 |
+| POST | `/api/items` | Yes | `{ name: string }` | `201 { item: Item }` | 400, 401, 500 |
+| PATCH | `/api/items/[id]` | Yes | `{ name?: string }` | `200 { item: Item }` | 400, 401, 404, 500 |
+| DELETE | `/api/items/[id]` | Yes | — | `200 { success: true }` | 401, 404, 500 |
 
-## Límites
+## Limits
 
-| Límite | Valor | Dónde se aplica |
+| Limit | Value | Where it applies |
 | --- | --- | --- |
-| Tamaño del cuerpo | 64 KB | `readJsonBody` |
-| Filas por lectura | 1000 | consultas de lista |
-| Identificadores por filtro | 100 | `validateUuidList` |
+| Body size | 64 KB | `readJsonBody` |
+| Rows per read | 1000 | list queries |
+| Identifiers per filter | 100 | `validateUuidList` |

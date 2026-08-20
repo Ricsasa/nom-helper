@@ -1,32 +1,32 @@
-# Estrategia de pruebas
+# Testing strategy
 
-> Plantilla. Ajusta los umbrales y bórrala cuando el proyecto tenga su propia versión.
+> Template. Adjust the thresholds, and delete this file once the project has its own version.
 
-## Alcance
+## Scope
 
-| Capa | Qué se prueba | Cómo |
+| Layer | What it tests | How |
 | --- | --- | --- |
-| `lib/validation.ts` | cada rama de cada validador | pruebas puras, sin mocks |
-| `lib/db-server.ts` | filtros y forma de la fila enviada | `createSupabaseMock` |
-| `app/api/**` | 401, 400, 404, camino feliz y 500 | `jsonRequest` + módulos mockeados |
-| Hooks de React Query | clave usada e invalidaciones tras mutar | `createWrapper` |
-| Componentes | roles accesibles y estados, nunca clases CSS | Testing Library |
+| `lib/validation.ts` | every branch of every validator | pure tests, no mocks |
+| `lib/db-server.ts` | filters and the shape of the row sent | `createSupabaseMock` |
+| `app/api/**` | 401, 400, 404, the happy path, and 500 | `jsonRequest` plus mocked modules |
+| React Query hooks | the key used and the invalidations after a mutation | `createWrapper` |
+| Components | accessible roles and states, never CSS classes | Testing Library |
 
-## Reglas
+## Rules
 
-- Consulta el DOM por rol y texto accesible. Nunca por clase: el boilerplate no fija estilos y las clases cambiarán.
-- Una prueba comprueba un comportamiento. El nombre dice qué falla, no qué llama.
-- Nada de red real. El cliente del backend siempre está mockeado.
-- Los datos de prueba salen de fábricas en `__tests__/helpers/`, con sobrescrituras parciales.
+- Query the DOM by role and accessible text. Never query by class: the boilerplate sets no styles, and the classes will change.
+- One test checks one behavior. The name says what fails, not what it calls.
+- Use no real network. The backend client is always mocked.
+- Test data comes from factories in `__tests__/helpers/`, with partial overrides.
 
-## Comandos
+## Commands
 
 ```bash
-npm test              # una pasada
-npm run test:watch    # durante el desarrollo
-npm run test:coverage # informe de cobertura
+npm test              # one pass
+npm run test:watch    # during development
+npm run test:coverage # coverage report
 ```
 
-## Umbral
+## Threshold
 
-Cobertura mínima acordada: __%. Configúrala en `coverageThreshold` dentro de `jest.config.js` cuando el proyecto la fije.
+Agreed minimum coverage: __%. Set it in `coverageThreshold` inside `jest.config.js` once the project fixes the value.

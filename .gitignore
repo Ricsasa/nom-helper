@@ -42,3 +42,9 @@ Thumbs.db
 # Local agent settings
 .claude/settings.local.json
 .mcp.json
+
+# Agent tutorials
+tutorials/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+graft/
