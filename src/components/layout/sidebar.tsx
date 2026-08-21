@@ -36,6 +36,12 @@ export type SidebarProps = {
   profileName: string;
   profileEmail: string;
   onOpenSettings: () => void;
+  /**
+   * The operator entry is rendered only for the operator. It is not disabled
+   * and not hidden for anyone else: for a regular user the element does not
+   * exist in the tree at all (addendum, "Access").
+   */
+  isOperator?: boolean;
 };
 
 export function Sidebar({
@@ -48,6 +54,7 @@ export function Sidebar({
   profileName,
   profileEmail,
   onOpenSettings,
+  isOperator = false,
 }: SidebarProps) {
   const { t } = useLanguage();
   const drawerRef = useRef<HTMLElement>(null);
@@ -110,6 +117,13 @@ export function Sidebar({
           <Glyph className="text-faint">§</Glyph>
           {t('nav.about')}
         </Link>
+
+        {isOperator ? (
+          <Link href="/dashboard" onClick={onClose} className={NAV_ITEM}>
+            <Glyph className="text-faint">◧</Glyph>
+            {t('operator.entry')}
+          </Link>
+        ) : null}
       </nav>
 
       <div className="flex-1 overflow-y-auto px-2.5 py-3.5">

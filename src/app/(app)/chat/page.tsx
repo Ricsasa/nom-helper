@@ -10,5 +10,11 @@ import { getCurrentSession } from '@/lib/auth';
 export default async function ChatPage() {
   const session = (await getCurrentSession())!;
 
-  return <AppShell profileName={session.profile.name} profileEmail={session.email} />;
+  return (
+    <AppShell
+      profileName={session.profile.name}
+      profileEmail={session.email}
+      isOperator={session.profile.role === 'operator'}
+    />
+  );
 }

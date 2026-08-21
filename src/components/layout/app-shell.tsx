@@ -24,9 +24,11 @@ import { addHistoryTopic } from '@/lib/utils/history';
 export function AppShell({
   profileName,
   profileEmail,
+  isOperator = false,
 }: {
   profileName: string;
   profileEmail: string;
+  isOperator?: boolean;
 }) {
   const { t } = useLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -67,6 +69,7 @@ export function AppShell({
           profileName={profileName}
           profileEmail={profileEmail}
           onOpenSettings={() => setSettingsOpen(true)}
+          isOperator={isOperator}
         />
 
         <main className="flex min-w-0 flex-1 flex-col">
