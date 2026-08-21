@@ -89,6 +89,19 @@ const esMX = {
   'notice.thread.link': 'Fuentes y alcance completo',
   'notice.thread.collapsedRef': 'NOM-001-SEDE-2018 · vigente desde 29 nov 2018',
 
+  'response.summary': 'Resumen',
+  'response.explanation': 'Explicación',
+  'response.citations': 'Citas de la norma',
+  'response.citation': 'cita',
+  'response.citationsCount': 'citas',
+  'response.seeText': 'Ver texto',
+  'response.hideText': 'Ocultar',
+  'response.confidence': 'Confianza',
+  'response.confidence.high': 'Alta',
+  'response.confidence.medium': 'Media',
+  'response.confidence.low': 'Baja',
+  'response.insufficient': 'Información insuficiente',
+
   'footer.madeWith': 'Made with',
   'footer.by': 'by',
 } as const;

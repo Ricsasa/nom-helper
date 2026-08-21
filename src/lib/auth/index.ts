@@ -1,7 +1,9 @@
+import { cache } from 'react';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createProfile, getProfileByAuthUserId } from '../db/auth';
+import type { Profile } from '../db/types';
 
 /**
  * Session entry point. Supabase Auth owns the credentials, this module owns
@@ -81,3 +83,26 @@ export async function signUpWithPassword(
   const profile = existing ?? (await createProfile(data.user.id, name));
   return { profileId: profile.id };
 }
+
+/**
+ * The current session, resolved to a profile row. Returns null when nobody is
+ * signed in, so a caller decides for itself whether that is a redirect or an
+ * empty state.
+ *
+ * The email comes from the auth user, not from profiles: profiles does not
+ * store it. auth_user_id stops here, exactly as it does in the two functions
+ * above.
+ *
+ * Wrapped in React cache so the (app) layout and the page it renders share one
+ * round trip per request.
+ */
+export const getCurrentSession = cache(
+  async (): Promise<{ profile: Profile; email: string } | null> => {
+    const { data, error } = await (await getAuthClient()).auth.getUser();
+    if (error || !data.user) return null;
+
+    const profile = await getProfileByAuthUserId(data.user.id);
+    if (!profile) return null;
+    return { profile, email: data.user.email ?? '' };
+  }
+);

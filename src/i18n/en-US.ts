@@ -91,6 +91,19 @@ const enUS: Record<keyof typeof esMX, string> = {
   'notice.thread.link': 'Full sources and scope',
   'notice.thread.collapsedRef': 'NOM-001-SEDE-2018 · in force since 29 Nov 2018',
 
+  'response.summary': 'Summary',
+  'response.explanation': 'Explanation',
+  'response.citations': 'Citations from the standard',
+  'response.citation': 'citation',
+  'response.citationsCount': 'citations',
+  'response.seeText': 'See text',
+  'response.hideText': 'Hide',
+  'response.confidence': 'Confidence',
+  'response.confidence.high': 'High',
+  'response.confidence.medium': 'Medium',
+  'response.confidence.low': 'Low',
+  'response.insufficient': 'Insufficient information',
+
   'footer.madeWith': 'Made with',
   'footer.by': 'by',
 };

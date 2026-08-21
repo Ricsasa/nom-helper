@@ -1,10 +1,14 @@
 import { AppShell } from '@/components/layout/app-shell';
+import { getCurrentSession } from '@/lib/auth';
 
 /**
- * The profile is hardcoded until src/lib/auth/ can resolve a session to a
- * profile_id. At that point this page reads the profile server-side and passes
- * it down; the shell already takes it as props.
+ * A server component reads the session and hands the shell plain props. The
+ * layout above has already redirected an anonymous visitor, so the session is
+ * present here; the non-null assertion states that instead of inventing a
+ * fallback identity.
  */
-export default function ChatPage() {
-  return <AppShell profileName="Ing. Ramiro Martínez" profileEmail="rmartinez@iepsa.mx" />;
+export default async function ChatPage() {
+  const session = (await getCurrentSession())!;
+
+  return <AppShell profileName={session.profile.name} profileEmail={session.email} />;
 }

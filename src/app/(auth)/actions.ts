@@ -1,41 +1,32 @@
 'use server';
 
+import { redirect } from 'next/navigation';
+import { signInWithPassword, signUpWithPassword } from '@/lib/auth';
 import type { AuthErrorCode } from '@/lib/utils/auth-validation';
 
 /**
- * The seam between the access screens and Supabase Auth.
+ * The seam between the access screens and Supabase Auth. The action layer
+ * exists so the forms stay client components without ever importing the auth
+ * module, and so the session cookie is written on the server.
  *
- * BLOCKED: `src/lib/auth/` does not exist yet. It is a DB agent deliverable
- * (ORCHESTRATOR, "Shared directories"), and spec sections 2.1 and 2.4 forbid
- * the frontend agent from writing the session logic or a Supabase call itself.
- *
- * When that module lands, delete the throw in each function below and restore
- * the call. Nothing else in the interface has to change — the screens already
- * render every state these results can produce.
- *
- *   import { signInWithPassword, signUpWithPassword } from '@/lib/auth/session';
- *
- * Required contract:
- *   signInWithPassword(email, password)
- *     -> { profileId: string } | { error: 'invalidCredentials' }
- *   signUpWithPassword(email, password, name)
- *     -> { profileId: string } | { error: 'emailTaken' | 'weakPassword' }
- *
- * Both must set the session cookie server-side and resolve the row to a
- * profile_id. The frontend never sees auth_user_id (spec section 2.2).
+ * Only the failure path returns. A success redirects, which never resolves,
+ * hence the AuthResult type describing failures alone plus the ok case the
+ * caller never observes.
  */
 export type AuthResult = { ok: true } | { ok: false; code: AuthErrorCode };
 
-const NOT_WIRED = 'src/lib/auth/ is not available yet — pending the DB agent.';
-
-export async function signIn(_email: string, _password: string): Promise<AuthResult> {
-  throw new Error(NOT_WIRED);
+export async function signIn(email: string, password: string): Promise<AuthResult> {
+  const result = await signInWithPassword(email, password);
+  if ('error' in result) return { ok: false, code: result.error };
+  redirect('/chat');
 }
 
 export async function signUp(
-  _name: string,
-  _email: string,
-  _password: string
+  name: string,
+  email: string,
+  password: string
 ): Promise<AuthResult> {
-  throw new Error(NOT_WIRED);
+  const result = await signUpWithPassword(email, password, name);
+  if ('error' in result) return { ok: false, code: result.error };
+  redirect('/chat');
 }
