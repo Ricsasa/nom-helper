@@ -102,6 +102,16 @@ const esMX = {
   'response.confidence.low': 'Baja',
   'response.insufficient': 'Información insuficiente',
 
+  'rating.label': 'Valoración',
+  'rating.up': 'Respuesta útil',
+  'rating.down': 'Respuesta no útil',
+  'rating.saved': 'Registrada',
+  'rating.reasonSaved': 'Motivo registrado',
+  'rating.error': 'No se registró la valoración. Vuelve a intentarlo.',
+  'rating.reasonTitle': 'Qué falló (opcional)',
+  'rating.send': 'Enviar',
+  'rating.skip': 'Omitir',
+
   'footer.madeWith': 'Made with',
   'footer.by': 'by',
 } as const;

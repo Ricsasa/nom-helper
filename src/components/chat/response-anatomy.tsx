@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { RatingControl } from '@/components/chat/rating-control';
 import { SectionLabel } from '@/components/ui/section-label';
 import { useLanguage } from '@/components/shared/language-provider';
-import type { Citation, ConfidenceLevel, Message } from '@/lib/db/types';
+import type { Citation, ConfidenceLevel, Message, ResponseRating } from '@/lib/db/types';
 import type { TranslationKey } from '@/types/ui';
 
 /**
@@ -11,6 +12,10 @@ import type { TranslationKey } from '@/types/ui';
  * summary, explanation, citations, confidence level and the insufficient
  * information flag (spec section 9). It renders a Message it is given and
  * fetches nothing.
+ *
+ * The footer slot is the rating, after the citations in both states. The
+ * insufficient case is ratable too: an abstention can be right or over-careful,
+ * and only the user can tell the two apart (addendum, edge cases).
  *
  * The insufficient case is not an error state and not a variant of the normal
  * one: it is a framed block with its own header, because the answer that is
@@ -25,7 +30,14 @@ const CONFIDENCE_KEY: Record<ConfidenceLevel, TranslationKey> = {
 
 const FILLED_BARS: Record<ConfidenceLevel, number> = { high: 3, medium: 2, low: 1 };
 
-export function ResponseAnatomy({ message }: { message: Message }) {
+export function ResponseAnatomy({
+  message,
+  rating = null,
+}: {
+  message: Message;
+  /** Set when the conversation comes from history already rated. */
+  rating?: ResponseRating | null;
+}) {
   const { t } = useLanguage();
 
   if (message.insufficient_info) {
@@ -45,6 +57,7 @@ export function ResponseAnatomy({ message }: { message: Message }) {
         <div className="p-4">
           <p className="text-lg text-ink">{message.summary}</p>
           <p className="mt-2.5 text-base text-muted2">{message.explanation}</p>
+          <RatingControl messageId={message.id} initialRating={rating} />
         </div>
       </section>
     );
@@ -94,6 +107,7 @@ export function ResponseAnatomy({ message }: { message: Message }) {
         </ul>
 
         <ConfidenceMeter level={message.confidence_level} />
+        <RatingControl messageId={message.id} initialRating={rating} />
       </section>
     </article>
   );

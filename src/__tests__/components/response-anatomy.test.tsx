@@ -1,9 +1,11 @@
-import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ResponseAnatomy } from '@/components/chat/response-anatomy';
 import { LanguageProvider } from '@/components/shared/language-provider';
 import type { ConfidenceLevel, Message } from '@/lib/db/types';
+
+vi.mock('@/lib/db/ratings', () => ({ createRating: vi.fn() }));
 
 /**
  * The component reads a Message and nothing else, so the fixture is the whole
@@ -116,6 +118,16 @@ describe('ResponseAnatomy', () => {
     expect(screen.queryByText('Resumen')).not.toBeInTheDocument();
     expect(screen.queryByText('Citas de la norma')).not.toBeInTheDocument();
     expect(screen.queryByText('Confianza')).not.toBeInTheDocument();
+  });
+
+  it('offers the rating in both states, including insufficient information', () => {
+    renderMessage();
+    expect(screen.getByRole('button', { name: 'Respuesta útil' })).toBeInTheDocument();
+
+    cleanup();
+    renderMessage({ insufficient_info: true });
+    expect(screen.getByRole('button', { name: 'Respuesta útil' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Respuesta no útil' })).toBeInTheDocument();
   });
 
   it('keeps citation content untranslated when the language changes', () => {

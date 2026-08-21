@@ -104,6 +104,16 @@ const enUS: Record<keyof typeof esMX, string> = {
   'response.confidence.low': 'Low',
   'response.insufficient': 'Insufficient information',
 
+  'rating.label': 'Rating',
+  'rating.up': 'Helpful response',
+  'rating.down': 'Unhelpful response',
+  'rating.saved': 'Recorded',
+  'rating.reasonSaved': 'Reason recorded',
+  'rating.error': 'The rating was not recorded. Try again.',
+  'rating.reasonTitle': 'What failed (optional)',
+  'rating.send': 'Send',
+  'rating.skip': 'Skip',
+
   'footer.madeWith': 'Made with',
   'footer.by': 'by',
 };
