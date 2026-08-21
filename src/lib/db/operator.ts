@@ -1,5 +1,5 @@
 import { getClient, unwrap, unwrapMaybe } from './client';
-import { OperatorReview, OperatorReviewPayload, ReviewQueueEntry } from './types';
+import { OperatorReview, OperatorReviewPayload, ReviewQueueEntry, ReviewStatus } from './types';
 
 /**
  * The review row and the new review_status of the rating must land together.
@@ -25,14 +25,21 @@ export async function getOperatorReviewByRating(ratingId: string): Promise<Opera
   );
 }
 
-/** Pending negative ratings with the message that produced them. Operator only. */
-export async function getReviewQueue(): Promise<ReviewQueueEntry[]> {
+/** Negative ratings in one review state, with the message that produced them. */
+export async function getReviewQueueByStatus(
+  status: Extract<ReviewStatus, 'pending' | 'reviewed' | 'discarded'>
+): Promise<ReviewQueueEntry[]> {
   return unwrap<ReviewQueueEntry[]>(
     await getClient()
       .from('response_ratings')
       .select('*, message:messages(id, query, summary, confidence_level)')
       .eq('is_positive', false)
-      .eq('review_status', 'pending')
+      .eq('review_status', status)
       .order('created_at', { ascending: true })
   );
+}
+
+/** Pending negative ratings with the message that produced them. Operator only. */
+export async function getReviewQueue(): Promise<ReviewQueueEntry[]> {
+  return getReviewQueueByStatus('pending');
 }

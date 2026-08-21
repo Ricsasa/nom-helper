@@ -151,6 +151,15 @@ export interface ConsumptionSummary {
   total_cost: number;
 }
 
+/** One row of the operator consumption panel. Aggregated per profile. */
+export interface ProfileConsumption {
+  profile_id: string;
+  profile_name: string;
+  total_queries: number;
+  total_tokens: number;
+  total_cost: number;
+}
+
 /** A pending negative rating joined with the message that produced it. */
 export interface ReviewQueueEntry extends ResponseRating {
   message: Pick<Message, 'id' | 'query' | 'summary' | 'confidence_level'>;

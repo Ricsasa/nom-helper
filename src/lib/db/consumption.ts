@@ -1,5 +1,5 @@
 import { getClient, unwrap } from './client';
-import { ConsumptionLog, ConsumptionSummary, DateRange } from './types';
+import { ConsumptionLog, ConsumptionSummary, DateRange, ProfileConsumption } from './types';
 
 /** Append-only. One row per processed query, never updated afterwards. */
 export async function logConsumption(
@@ -49,4 +49,9 @@ export async function getTotalConsumptionSummary(
     })
   );
   return rows[0];
+}
+
+/** Operator only. Every profile that consumed at least once, heaviest first. */
+export async function listAllProfileConsumption(): Promise<ProfileConsumption[]> {
+  return unwrap<ProfileConsumption[]>(await getClient().rpc('all_profile_consumption'));
 }

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   getConsumptionByProfile,
   getTotalConsumptionSummary,
+  listAllProfileConsumption,
   logConsumption,
 } from '../consumption';
 import { DateRange, Message, Profile } from '../types';
@@ -81,5 +82,36 @@ describe('consumption domain', () => {
 
     expect(Number(summary.total_queries)).toBe(0);
     expect(Number(summary.total_cost)).toBe(0);
+  });
+
+  it('aggregates one row per profile, heaviest first', async () => {
+    const strangerMessage = await createTestMessage(stranger);
+    await logConsumption(profile.id, message.id, 100, 0.001);
+    await logConsumption(profile.id, message.id, 100, 0.001);
+    await logConsumption(stranger.id, strangerMessage.id, 500, 0.005);
+
+    const rows = await listAllProfileConsumption();
+    const mine = rows.find((row) => row.profile_id === profile.id);
+    const theirs = rows.find((row) => row.profile_id === stranger.id);
+
+    expect(mine).toMatchObject({ profile_name: 'Owner' });
+    expect(Number(mine!.total_queries)).toBe(2);
+    expect(Number(mine!.total_tokens)).toBe(200);
+    expect(Number(mine!.total_cost)).toBeCloseTo(0.002, 6);
+    expect(rows.indexOf(theirs!)).toBeLessThan(rows.indexOf(mine!));
+  });
+
+  it('leaves out a profile that consumed nothing', async () => {
+    await logConsumption(profile.id, message.id, 10, 0.0001);
+
+    const rows = await listAllProfileConsumption();
+    expect(rows.some((row) => row.profile_id === stranger.id)).toBe(false);
+  });
+
+  it('orders every row by total tokens descending', async () => {
+    await logConsumption(profile.id, message.id, 42, 0.0001);
+
+    const totals = (await listAllProfileConsumption()).map((row) => Number(row.total_tokens));
+    expect(totals).toEqual([...totals].sort((a, b) => b - a));
   });
 });

@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createOperatorReview, getOperatorReviewByRating, getReviewQueue } from '../operator';
+import {
+  createOperatorReview,
+  getOperatorReviewByRating,
+  getReviewQueue,
+  getReviewQueueByStatus,
+} from '../operator';
 import { createRating, getRatingByMessage } from '../ratings';
 import { Message, Profile, ResponseRating } from '../types';
 import { createTestMessage, createTestProfile, deleteTestProfile, MISSING_UUID } from './helpers';
@@ -102,5 +107,32 @@ describe('operator domain', () => {
     });
 
     expect((await getReviewQueue()).some((row) => row.id === rating.id)).toBe(false);
+  });
+
+  it('reads the queue of any review status', async () => {
+    expect((await getReviewQueueByStatus('pending')).some((row) => row.id === rating.id)).toBe(true);
+
+    await createOperatorReview(rating.id, {
+      technical_cause: 'no_issue',
+      destination: 'marked_reviewed',
+    });
+
+    const reviewed = (await getReviewQueueByStatus('reviewed')).find((row) => row.id === rating.id);
+    expect(reviewed).toBeDefined();
+    expect(reviewed!.message).toMatchObject({ id: message.id, query: message.query });
+    expect((await getReviewQueueByStatus('pending')).some((row) => row.id === rating.id)).toBe(
+      false
+    );
+  });
+
+  it('returns an empty result for a status the rating never reached', async () => {
+    await createOperatorReview(rating.id, {
+      technical_cause: 'no_issue',
+      destination: 'marked_reviewed',
+    });
+
+    expect((await getReviewQueueByStatus('discarded')).some((row) => row.id === rating.id)).toBe(
+      false
+    );
   });
 });
