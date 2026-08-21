@@ -84,6 +84,7 @@ const config: Config = {
         thread: '720px',
         doc: '760px',
         auth: '396px',
+        modal: '520px',
       },
       spacing: {
         sidebar: '274px',

@@ -33,6 +33,7 @@ export type SidebarProps = {
   onNewQuery: () => void;
   profileName: string;
   profileEmail: string;
+  onOpenSettings: () => void;
 };
 
 export function Sidebar({
@@ -44,6 +45,7 @@ export function Sidebar({
   onNewQuery,
   profileName,
   profileEmail,
+  onOpenSettings,
 }: SidebarProps) {
   const { t } = useLanguage();
   const drawerRef = useRef<HTMLElement>(null);
@@ -147,7 +149,18 @@ export function Sidebar({
       <div className="shrink-0 border-t border-line px-4 py-3">
         <p className="truncate text-[13px] font-medium">{profileName}</p>
         <p className="truncate font-mono text-mini text-faint">{profileEmail}</p>
-        <GhostButton className="mt-2.5">{t('nav.signOut')}</GhostButton>
+        <div className="mt-2.5 flex items-center gap-1.5">
+          <GhostButton
+            type="button"
+            onClick={() => {
+              onOpenSettings();
+              onClose();
+            }}
+          >
+            {t('settings.open')}
+          </GhostButton>
+          <GhostButton type="button">{t('nav.signOut')}</GhostButton>
+        </div>
       </div>
     </aside>
   );

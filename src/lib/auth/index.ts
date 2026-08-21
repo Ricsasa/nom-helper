@@ -106,3 +106,55 @@ export const getCurrentSession = cache(
     return { profile, email: data.user.email ?? '' };
   }
 );
+
+export type UpdateEmailError = 'emailTaken' | 'saveFailed';
+export type UpdatePasswordError = 'invalidCredentials' | 'weakPassword' | 'saveFailed';
+
+/**
+ * Changing the address of the current account. profiles does not store an
+ * email, so this is an auth-only write and nothing in the public schema moves.
+ *
+ * Supabase may hold the new address as pending until it is confirmed. The
+ * interface reports the change as saved either way, because from the user's
+ * side the request did succeed.
+ */
+export async function updateEmail(email: string): Promise<{ ok: true } | { error: UpdateEmailError }> {
+  const { error } = await (await getAuthClient()).auth.updateUser({ email });
+  if (!error) return { ok: true };
+  if (error.code === 'email_exists' || error.code === 'user_already_exists') {
+    return { error: 'emailTaken' };
+  }
+  return { error: 'saveFailed' };
+}
+
+/**
+ * updateUser does not ask for the current password, so it alone would let
+ * anyone with an open session change the credentials. Re-authenticating first
+ * is what makes the current-password field mean something.
+ */
+export async function updatePassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<{ ok: true } | { error: UpdatePasswordError }> {
+  const client = await getAuthClient();
+  const { data } = await client.auth.getUser();
+  if (!data.user?.email) return { error: 'saveFailed' };
+
+  const reauth = await client.auth.signInWithPassword({
+    email: data.user.email,
+    password: currentPassword,
+  });
+  if (reauth.error) return { error: 'invalidCredentials' };
+
+  const { error } = await client.auth.updateUser({ password: newPassword });
+  if (!error) return { ok: true };
+  if (error.code === 'weak_password' || /password/i.test(error.message)) {
+    return { error: 'weakPassword' };
+  }
+  return { error: 'saveFailed' };
+}
+
+/** Ends the session. Used after the account row is deleted. */
+export async function signOut(): Promise<void> {
+  await (await getAuthClient()).auth.signOut();
+}

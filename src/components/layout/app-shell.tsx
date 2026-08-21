@@ -6,6 +6,7 @@ import { Topbar } from './topbar';
 import { Composer } from '@/components/chat/composer';
 import { EmptyState } from '@/components/chat/empty-state';
 import { ThreadNotice } from '@/components/chat/thread-notice';
+import { AccountSettingsModal } from '@/components/settings/account-settings-modal';
 import { FooterStrip } from '@/components/shared/footer-strip';
 import { useLanguage } from '@/components/shared/language-provider';
 import { addHistoryTopic } from '@/lib/utils/history';
@@ -34,6 +35,7 @@ export function AppShell({
   const [threadTitle, setThreadTitle] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [noticeOpen, setNoticeOpen] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   function handleSubmit(query: string) {
     const next = addHistoryTopic(history, query);
@@ -64,6 +66,7 @@ export function AppShell({
           onNewQuery={handleNewQuery}
           profileName={profileName}
           profileEmail={profileEmail}
+          onOpenSettings={() => setSettingsOpen(true)}
         />
 
         <main className="flex min-w-0 flex-1 flex-col">
@@ -87,6 +90,13 @@ export function AppShell({
       </div>
 
       <FooterStrip />
+
+      <AccountSettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        profileName={profileName}
+        profileEmail={profileEmail}
+      />
     </div>
   );
 }
