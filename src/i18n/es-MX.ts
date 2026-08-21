@@ -166,6 +166,77 @@ const esMX = {
   'settings.error.passwordMismatch.title': 'Las contraseñas nuevas no coinciden',
   'settings.error.passwordMismatch.help': 'Escribe la misma contraseña en los dos campos.',
 
+  'about.title': 'Acerca del proyecto y las fuentes',
+  'about.back': 'Volver a la consulta',
+  'about.p1':
+    'Herramienta de consulta sobre normatividad eléctrica mexicana. Se pregunta en lenguaje natural y la respuesta se construye a partir del texto de la norma, con la cita al capítulo, artículo y página de donde salió cada afirmación.',
+  'about.p2':
+    'No consulta internet ni fuentes secundarias: solo los documentos normativos incorporados al sistema, listados abajo con su versión y fecha.',
+
+  'about.standards.label': 'Normas incorporadas',
+  'about.standards.status.current': 'Vigente',
+  'about.standards.status.inTransition': 'En transición',
+  'about.standards.status.superseded': 'Sustituida',
+  'about.standards.field.version': 'Versión',
+  'about.standards.field.publication': 'Publicación oficial',
+  'about.standards.field.loaded': 'Incorporada al sistema',
+  'about.standards.footnote': ' documentos incorporados · última actualización del índice: ',
+  'about.standards.note.historical':
+    'Se conserva como referencia histórica: sirve para consultar instalaciones proyectadas o verificadas bajo esa edición. No se cita en respuestas salvo que la consulta la pida de forma explícita.',
+
+  'about.coverage.label': 'Qué cubre y qué no',
+  'about.coverage.yes': 'Responde bien',
+  'about.coverage.no': 'Queda fuera',
+  'about.coverage.yes1':
+    'Qué exige la norma sobre un caso concreto: calibres, protecciones, puesta a tierra, canalizaciones, espacios de trabajo.',
+  'about.coverage.yes2': 'Localizar el artículo o la tabla aplicable y leer su texto literal.',
+  'about.coverage.yes3':
+    'Comparar requisitos entre secciones y entender de qué depende un valor.',
+  'about.coverage.yes4':
+    'Verificar si un criterio que ya traías está respaldado por el texto normativo.',
+  'about.coverage.no1':
+    'Cálculos de proyecto: memorias, cuadros de carga, dimensionamiento completo de una instalación.',
+  'about.coverage.no2':
+    'Dictámenes, aprobaciones o cualquier documento con validez ante una unidad de verificación.',
+  'about.coverage.no3':
+    'Verificación de instalaciones existentes: eso requiere inspección física.',
+  'about.coverage.no4':
+    'Normas no incorporadas al sistema, reglamentos locales y criterios de la compañía suministradora.',
+
+  'about.anatomy.label': 'Cómo leer una respuesta',
+  'about.anatomy.summary':
+    'La respuesta directa, en una o dos frases. Si solo lees una parte, lee esta.',
+  'about.anatomy.explanation':
+    'El desarrollo técnico: de qué depende el valor, qué factores lo modifican y cuándo deja de aplicar.',
+  'about.anatomy.citations':
+    'Capítulo, artículo y página de donde salió cada afirmación. Se abren en línea para leer el texto literal sin salir de la conversación.',
+  'about.anatomy.confidence':
+    'Qué tan sustentada está la respuesta en el texto recuperado. No mide qué tan correcta es la instalación que estás proyectando.',
+  'about.anatomy.insufficient':
+    'Cuando el texto recuperado no alcanza para responder, el sistema lo declara en lugar de completar el hueco. Es el resultado correcto cuando la norma no cubre el caso como fue preguntado.',
+
+  'about.confidence.label': 'Niveles de confianza',
+  'about.confidence.high':
+    'Varias citas concordantes que responden directamente la consulta. Verifica las citas y aplica.',
+  'about.confidence.medium':
+    'El texto responde, pero el valor depende de condiciones que la consulta no especificó. Lee la explicación completa antes de aplicar.',
+  'about.confidence.low':
+    'El respaldo es parcial o indirecto. Trátala como punto de partida: abre las citas, verifica en el documento oficial y consulta a un profesional responsable.',
+
+  'about.disclaimer.label': 'Aviso completo',
+  'about.disclaimer.does.title': 'Qué hace el sistema',
+  'about.disclaimer.does.text':
+    'Recupera fragmentos del texto normativo incorporado y redacta una respuesta a partir de ellos. Todo lo que afirma debe poder rastrearse a una cita; si no hay respaldo suficiente, lo declara en lugar de completar el hueco.',
+  'about.disclaimer.doesNot.title': 'Qué no hace',
+  'about.disclaimer.doesNot.text':
+    'No emite criterio profesional ni dictamen técnico, no aprueba ni rechaza instalaciones, y no sustituye al perito o al responsable de la obra. Tampoco considera reglamentos locales ni requisitos de la compañía suministradora.',
+  'about.disclaimer.errors.title': 'Errores posibles',
+  'about.disclaimer.errors.text':
+    'La redacción automática puede citar un artículo que no aplica al caso, omitir una excepción o arrastrar un valor de una tabla equivocada. Por eso cada respuesta trae la referencia: verifica siempre contra el texto oficial publicado antes de aplicar cualquier resultado.',
+  'about.disclaimer.liability.title': 'Responsabilidad',
+  'about.disclaimer.liability.text':
+    'La decisión técnica y su ejecución son del profesional que las firma. El uso de esta herramienta no transfiere esa responsabilidad.',
+
   'footer.madeWith': 'Made with',
   'footer.by': 'by',
 } as const;

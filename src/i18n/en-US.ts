@@ -168,6 +168,77 @@ const enUS: Record<keyof typeof esMX, string> = {
   'settings.error.passwordMismatch.title': 'The new passwords do not match',
   'settings.error.passwordMismatch.help': 'Type the same password in both fields.',
 
+  'about.title': 'About the project and its sources',
+  'about.back': 'Back to queries',
+  'about.p1':
+    'A tool for querying Mexican electrical regulations. You ask in plain language and the answer is built from the text of the standard, citing the chapter, article and page each statement came from.',
+  'about.p2':
+    'It does not search the internet or secondary sources: only the normative documents loaded into the system, listed below with their version and date.',
+
+  'about.standards.label': 'Standards loaded',
+  'about.standards.status.current': 'In effect',
+  'about.standards.status.inTransition': 'In transition',
+  'about.standards.status.superseded': 'Superseded',
+  'about.standards.field.version': 'Version',
+  'about.standards.field.publication': 'Official publication',
+  'about.standards.field.loaded': 'Loaded into the system',
+  'about.standards.footnote': ' documents loaded · index last updated: ',
+  'about.standards.note.historical':
+    'Kept as a historical reference: use it for installations designed or verified under that edition. It is not cited in answers unless the query asks for it explicitly.',
+
+  'about.coverage.label': "What it covers and what it doesn't",
+  'about.coverage.yes': 'Answers well',
+  'about.coverage.no': 'Out of scope',
+  'about.coverage.yes1':
+    'What the standard requires in a concrete case: conductor sizes, protection, grounding, raceways, working spaces.',
+  'about.coverage.yes2': 'Locating the applicable article or table and reading its literal text.',
+  'about.coverage.yes3':
+    'Comparing requirements across sections and understanding what a value depends on.',
+  'about.coverage.yes4':
+    'Checking whether a criterion you already had is backed by the normative text.',
+  'about.coverage.no1':
+    'Project calculations: design reports, load schedules, full sizing of an installation.',
+  'about.coverage.no2':
+    'Rulings, approvals or any document with standing before a verification unit.',
+  'about.coverage.no3':
+    'Verification of existing installations: that requires a physical inspection.',
+  'about.coverage.no4':
+    'Standards not loaded into the system, local regulations and utility company criteria.',
+
+  'about.anatomy.label': 'How to read an answer',
+  'about.anatomy.summary':
+    'The direct answer, in one or two sentences. If you read only one part, read this one.',
+  'about.anatomy.explanation':
+    'The technical development: what the value depends on, which factors modify it and when it stops applying.',
+  'about.anatomy.citations':
+    'The chapter, article and page each statement came from. They open inline, so you read the literal text without leaving the conversation.',
+  'about.anatomy.confidence':
+    'How well the answer is supported by the retrieved text. It does not measure how correct the installation you are designing is.',
+  'about.anatomy.insufficient':
+    'When the retrieved text is not enough to answer, the system says so instead of filling the gap. It is the correct result when the standard does not cover the case as it was asked.',
+
+  'about.confidence.label': 'Confidence levels',
+  'about.confidence.high':
+    'Several agreeing citations that answer the query directly. Verify the citations and apply.',
+  'about.confidence.medium':
+    'The text answers, but the value depends on conditions the query did not state. Read the full explanation before applying.',
+  'about.confidence.low':
+    'The support is partial or indirect. Treat it as a starting point: open the citations, verify against the official document and consult a responsible professional.',
+
+  'about.disclaimer.label': 'Full notice',
+  'about.disclaimer.does.title': 'What the system does',
+  'about.disclaimer.does.text':
+    'It retrieves fragments of the loaded normative text and writes an answer from them. Everything it states must be traceable to a citation; when the support is not enough, it says so instead of filling the gap.',
+  'about.disclaimer.doesNot.title': 'What it does not do',
+  'about.disclaimer.doesNot.text':
+    'It issues no professional judgment and no technical ruling, it approves or rejects no installation, and it does not replace the expert or the person responsible for the work. It also does not account for local regulations or utility company requirements.',
+  'about.disclaimer.errors.title': 'Possible errors',
+  'about.disclaimer.errors.text':
+    'Automatic drafting can cite an article that does not apply to the case, omit an exception or carry a value over from the wrong table. That is why every answer carries its reference: always verify against the official published text before applying any result.',
+  'about.disclaimer.liability.title': 'Liability',
+  'about.disclaimer.liability.text':
+    'The technical decision and its execution belong to the professional who signs them. Use of this tool does not transfer that responsibility.',
+
   'footer.madeWith': 'Made with',
   'footer.by': 'by',
 };

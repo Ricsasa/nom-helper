@@ -88,3 +88,13 @@ export async function deleteAccount(): Promise<SettingsResult> {
   await signOut();
   redirect('/login');
 }
+
+/**
+ * Ends the session from the sidebar. The redirect is what makes the button
+ * final: without it the client would keep rendering a shell whose session
+ * cookie is already gone.
+ */
+export async function signOutAction(): Promise<void> {
+  await signOut();
+  redirect('/login');
+}

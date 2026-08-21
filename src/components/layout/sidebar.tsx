@@ -1,6 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
+import { signOutAction } from '@/app/(app)/settings/actions';
 import { BrandSquares } from '@/components/shared/brand-mark';
 import { GhostButton } from '@/components/ui/ghost-button';
 import { useLanguage } from '@/components/shared/language-provider';
@@ -104,10 +106,10 @@ export function Sidebar({
           </div>
         ))}
 
-        <button type="button" className={NAV_ITEM}>
+        <Link href="/about" onClick={onClose} className={NAV_ITEM}>
           <Glyph className="text-faint">§</Glyph>
           {t('nav.about')}
-        </button>
+        </Link>
       </nav>
 
       <div className="flex-1 overflow-y-auto px-2.5 py-3.5">
@@ -159,7 +161,9 @@ export function Sidebar({
           >
             {t('settings.open')}
           </GhostButton>
-          <GhostButton type="button">{t('nav.signOut')}</GhostButton>
+          <GhostButton type="button" onClick={() => void signOutAction()}>
+            {t('nav.signOut')}
+          </GhostButton>
         </div>
       </div>
     </aside>
